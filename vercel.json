@@ -1,0 +1,11 @@
+{
+  "rewrites": [
+    { "source": "/work", "destination": "/work/index.html" },
+    { "source": "/about", "destination": "/about/index.html" },
+    { "source": "/pricing", "destination": "/pricing/index.html" },
+    { "source": "/contact", "destination": "/contact/index.html" },
+    { "source": "/work/families", "destination": "/work/families/index.html" },
+    { "source": "/work/maternity", "destination": "/work/maternity/index.html" },
+    { "source": "/work/couples-individuals", "destination": "/work/couples-individuals/index.html" }
+  ]
+}
