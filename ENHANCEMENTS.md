@@ -6,28 +6,32 @@ without re-deriving the analysis.
 
 ---
 
-## 1. Hash still shows in the URL on direct page loads
+## 1. ~~Hash still shows in the URL on direct page loads~~ — done
 
-**What happens today:** loading `/about` directly resolves to the About page
-correctly (no homepage flash), but the URL bar then shows `/about#about` —
-because the "land on the right page with no flash" fix works by presetting
-`location.hash` before the app boots, and setting `location.hash` writes it
-into the URL.
+**Status: fixed.** Loading `/about` directly now shows a clean `/about` URL
+with no `#about` appended, while still landing on the right page with no
+homepage flash.
 
-**Fix, if wanted:** don't write to `location.hash` on initial load — set a
-plain JS variable instead (e.g. `window.__dcInitialHash`) and have the app's
-`_syncFromHash` routing function fall back to it when the real hash is empty.
-Small, scoped change; duplicated across the same 7 entry files as the
-original fix (see [README.md](README.md) for why duplication is required by
-this framework).
+**How:** the bootstrap script in each entry file's `<head>` no longer writes
+to `location.hash` (which is what put `#about` in the URL). Instead it sets
+a plain variable, `window.__dcInitialHash`, and the app's `_syncFromHash`
+routing function falls back to it only when the real `location.hash` is
+empty:
+
+```js
+const raw = (typeof window !== 'undefined'
+  ? (window.location.hash || window.__dcInitialHash || '')
+  : '').replace(/^#\/?/, '')...
+```
+
+Applied to the same 7 entry files (`work/`, `about/`, `pricing/`,
+`contact/`, `work/families/`, `work/maternity/`,
+`work/couples-individuals/`).
 
 **Note:** this only cleans up the *initial* URL. Clicking around the site
 after landing still only updates the hash, not the path (e.g. from `/about`,
-clicking "Pricing" shows `/about#pricing`, not `/pricing`) — that's the
-separate, bigger item below.
-
-**Cost:** small — one bootstrap script line + one line in `_syncFromHash`,
-copied to the 7 entry files.
+clicking "Pricing" shows `/about#pricing`, not `/pricing`) — that's expected,
+and is the separate, bigger item below (#2).
 
 ---
 
