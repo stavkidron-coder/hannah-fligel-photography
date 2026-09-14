@@ -54,3 +54,7 @@ toggles should stay byte-identical across all of them).
 `vercel.json` adds rewrites so `/work`, `/about`, `/pricing`, `/contact`,
 `/work/families`, `/work/maternity`, and `/work/couples-individuals` resolve
 to these files instead of 404ing.
+
+See [ENHANCEMENTS.md](ENHANCEMENTS.md) for known follow-ups and tradeoffs
+around this routing setup (hash-in-URL on direct loads, history-based
+routing, per-session static pages, etc.).
