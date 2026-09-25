@@ -87,7 +87,7 @@
   <!-- ===================== HOME ===================== -->
   <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
   <main id="main">
-    <section style="position:relative;height:min(calc(100dvh - 67px),128vw);min-height:430px;overflow:hidden;background:var(--paper);">
+    <section onTouchStart="{{ heroTouchStart }}" onTouchEnd="{{ heroTouchEnd }}" aria-roledescription="carousel" style="position:relative;height:min(calc(100dvh - 67px),128vw);min-height:430px;overflow:hidden;background:var(--paper);touch-action:pan-y;">
       {{ heroLayers }}
       <div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(40,32,24,0) 55%,rgba(40,32,24,0.32) 100%);"></div>
       <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:max(9vh,86px);text-align:center;pointer-events:none;">
@@ -115,8 +115,8 @@
       <div style="margin-top:42px;"><button onClick="{{ navWork }}" style="background:none;border:none;border-bottom:1px solid var(--muted);cursor:pointer;padding:0 0 6px;font-family:'Mulish',sans-serif;font-size:12px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--ink);">See the Work&nbsp;→</button></div>
     </section>
 
-    <section style="padding:0 clamp(20px,4vw,40px);">
-      <div style="max-width:1180px;margin:0 auto;display:grid;grid-template-columns:repeat({{ teaserGridCols }},1fr);grid-auto-flow:dense;gap:clamp(16px,2vw,22px);">{{ teaserTiles }}</div>
+    <section style="{{ teaserSectionStyle }}">
+      <div style="max-width:1180px;margin:0 auto;display:grid;grid-template-columns:repeat({{ teaserGridCols }},1fr);grid-auto-flow:dense;gap:{{ photoGap }};">{{ teaserTiles }}</div>
     </section>
 
     <section style="padding:clamp(64px,9vw,104px) 32px;text-align:center;">
@@ -158,7 +158,7 @@
         <h1 style="margin:0;font-family:'Cormorant Garamond',serif;font-weight:400;font-size:clamp(32px,4.4vw,50px);line-height:1.1;color:var(--ink);">{{ sessionTitle }}</h1>
         <p style="margin:14px 0 0;font-family:'Mulish',sans-serif;font-size:12px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);">{{ sessionCatLabel }}</p>
       </div>
-      <div style="max-width:860px;margin:0 auto;display:grid;grid-template-columns:repeat({{ sessionGridCols }},1fr);grid-auto-flow:dense;gap:clamp(14px,2vw,20px);">{{ sessionPhotoTiles }}</div>
+      <div style="{{ sessionGridStyle }}">{{ sessionPhotoTiles }}</div>
 
       <sc-if value="{{ sessionQuote }}" hint-placeholder-val="{{ false }}">
         <div style="max-width:640px;margin:clamp(48px,6vw,66px) auto 0;text-align:center;">
@@ -549,6 +549,7 @@ class Component extends DCLogic {
     clearInterval(this._t);
     const sec = this.props.heroIntervalSec ?? 5;
     this._t = setInterval(() => {
+      this._heroQuick = false;
       this.setState((s) => ({ activeHero: (s.activeHero + 1) % this.heroSlides.length }));
     }, Math.max(1500, sec * 1000));
   }
@@ -568,8 +569,22 @@ class Component extends DCLogic {
   toggleHero = () => {
     if (this.state.heroPaused) this.resumeHero(); else this.pauseHero();
   };
-  goToHero = (i) => {
+  heroTouchStart = (e) => {
+    const t = e.touches && e.touches[0];
+    this._touch = t ? { x: t.clientX, y: t.clientY } : null;
+  };
+  heroTouchEnd = (e) => {
+    const s = this._touch; this._touch = null;
+    const t = e.changedTouches && e.changedTouches[0];
+    if (!s || !t) return;
+    const dx = t.clientX - s.x, dy = t.clientY - s.y;
+    if (Math.abs(dx) < 40 || Math.abs(dx) < Math.abs(dy) * 1.2) return;
+    const n = this.heroSlides.length;
+    this.goToHero((this.state.activeHero + (dx < 0 ? 1 : -1) + n) % n, true);
+  };
+  goToHero = (i, quick) => {
     this._stopAutoRotate();
+    this._heroQuick = !!quick;
     this.setState({ activeHero: i });
     if (!this._reducedMotion && !this.state.heroPaused) this._startAutoRotate();
   };
@@ -889,7 +904,7 @@ class Component extends DCLogic {
       style: {
         position: 'absolute', inset: 0,
         opacity: i === this.state.activeHero ? 1 : 0,
-        transition: 'opacity 2.4s ease-in-out',
+        transition: this._heroQuick ? 'opacity .6s ease-out' : 'opacity 2.4s ease-in-out',
         backgroundImage: `url("${(typeof window !== 'undefined' && window.__resources && window.__resources['hero' + i]) || encodeURI(s.src)}")`,
         backgroundSize: 'cover',
         backgroundPosition: s.pos,
@@ -897,8 +912,13 @@ class Component extends DCLogic {
       },
     }));
 
-    const teaserGridCols = isMobile ? 2 : (isTablet ? 2 : 3);
-    const sessionGridCols = 2;
+    const teaserGridCols = isMobile ? 1 : (isTablet ? 2 : 3);
+    const sessionGridCols = isMobile ? 1 : 2;
+    const photoGap = isMobile ? '6px' : 'clamp(16px,2vw,22px)';
+    const teaserSectionStyle = { padding: isMobile ? 0 : '0 clamp(20px,4vw,40px)' };
+    const sessionGridStyle = isMobile
+      ? { width: '100vw', marginLeft: 'calc(50% - 50vw)', display: 'grid', gridTemplateColumns: '1fr', gap: '6px' }
+      : { maxWidth: 860, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gridAutoFlow: 'dense', gap: 'clamp(14px,2vw,20px)' };
     const pricingGridCols = isMobile ? 1 : (isTablet ? 2 : 3);
     const pricingGridGap = isMobile ? '48px' : 'clamp(18px,2.6vw,28px)';
     const pricingNoteGap = isMobile ? '20px' : '4px';
@@ -955,7 +975,7 @@ class Component extends DCLogic {
       menuButtonRef: (el) => { this._menuButton = el; },
       onMenuKeyDown: this.onMenuKeyDown,
       closeMenu: this.closeMenu,
-      heroLayers, heroDots, heroPaused: this.state.heroPaused, heroPlaying: !this.state.heroPaused, pauseHero: this.pauseHero, resumeHero: this.resumeHero, toggleHero: this.toggleHero,
+      heroLayers, heroDots, heroTouchStart: this.heroTouchStart, heroTouchEnd: this.heroTouchEnd, heroPaused: this.state.heroPaused, heroPlaying: !this.state.heroPaused, pauseHero: this.pauseHero, resumeHero: this.resumeHero, toggleHero: this.toggleHero,
       teaserTiles, shownSessions, sessionPhotoTiles,
       isSessionView, closeSession: () => this.closeSession(),
       activeTestimonial: this.testimonialsData[this.state.activeTestimonial],
@@ -1083,7 +1103,7 @@ class Component extends DCLogic {
         } catch (err) {}
         this.setState({ sent: true, sendState: 'handoff', formErrors: {}, draftHref: href });
       },
-      isMobile, galleryCols, teaserGridCols, sessionGridCols, pricingGridCols, pricingGridGap, pricingNoteGap, pricingNoteGap2,
+      isMobile, galleryCols, teaserGridCols, sessionGridCols, photoGap, teaserSectionStyle, sessionGridStyle, pricingGridCols, pricingGridGap, pricingNoteGap, pricingNoteGap2,
       menuOpen: this.state.menuOpen,
       toggleMenu: () => this.toggleMenu(),
       navLinkMobile: navLinkStyleMobile,
