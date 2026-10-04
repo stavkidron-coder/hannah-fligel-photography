@@ -92,7 +92,7 @@ export default function Home() {
   return (
     <main id="main">
       {isDesktop ? (
-      <section onTouchStart={heroTouchStart} onTouchEnd={heroTouchEnd} aria-roledescription="carousel" style={css(`position:relative;height:100dvh;min-height:560px;margin-top:-94px;overflow:hidden;background:#2E1A0F;`)}>
+      <section onTouchStart={heroTouchStart} onTouchEnd={heroTouchEnd} aria-roledescription="carousel" style={css(`position:relative;height:100dvh;min-height:560px;margin-top:-94px;overflow:hidden;background:#0F0805;`)}>
         <div style={css(`position:absolute;inset:0;isolation:isolate;`)}>{heroLayers}</div>
         <div style={css(`position:absolute;inset:0;background:linear-gradient(to top,rgba(40,32,24,0.06) 50.481%,rgba(40,32,24,0) 100%);`)}></div>
         <div aria-hidden="true" style={css(`position:absolute;inset:0;pointer-events:none;`)}>
