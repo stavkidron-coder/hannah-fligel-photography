@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { NARROW, HEIGHT, WIDEN, PAUSE, FILL } from '../lib/heroTiming';
 
 // Desktop hero pagination. Changing slide runs a staged morph rather than a
 // plain swap, in this order:
@@ -9,11 +10,10 @@ import { useEffect, useRef, useState } from 'react';
 //   5. the new pill widens to full size
 // The fill stays solid until the height step has finished, so the bar-to-dot
 // change reads as a shape change rather than a fade. The whole sequence
-// (NARROW + HEIGHT + WIDEN + 2 × PAUSE = 2.6s) runs slightly longer than the
-// 2.4s photo crossfade. Clicked dots go through the same sequence, and a new
+// (NARROW + HEIGHT + WIDEN + 2 × PAUSE = 2.8s) is shared with the photo
+// fades via lib/heroTiming.js. Clicked dots go through the same sequence, and a new
 // change mid-sequence retargets from wherever each item currently is.
 const DOT = 12, PILL_W = 36, PILL_H = 18;
-const NARROW = 600, HEIGHT = 900, WIDEN = 700, PAUSE = 200, FILL = 800;
 const EASE = 'cubic-bezier(.45,0,.25,1)';
 
 const restingSize = (isActive) => (isActive ? { w: PILL_W, h: PILL_H, f: true } : { w: DOT, h: DOT, f: false });
@@ -69,7 +69,7 @@ export default function HeroPagination({ count, active, onSelect, ctrl }) {
                 border: '1px solid ' + ctrl.fg,
                 background: filled ? ctrl.fg : 'transparent',
                 boxShadow: filled ? ctrl.pillGlow : ctrl.ringGlow,
-                transition: `width ${it.w > DOT && i === active ? tg : tw}, height ${th}, border-radius ${tw}, background-color ${FILL * k}ms ease, border-color 1.2s ease, box-shadow ${th}`,
+                transition: `width ${it.w > DOT && i === active ? tg : tw}, height ${th}, border-radius ${tw}, background-color ${FILL * k}ms ease, border-color ${ctrl.fadeMs * k}ms ease-in-out, box-shadow ${th}`,
               }}
             />
           </button>
