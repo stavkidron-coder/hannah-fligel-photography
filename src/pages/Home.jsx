@@ -3,6 +3,7 @@ import { AppContext } from '../hooks/useApp';
 import { css } from '../lib/css';
 import { heroSlides, testimonialsData, teaserPhotos } from '../data/content';
 import { layoutFor } from '../lib/layout';
+import { useHeroTones } from '../hooks/useHeroTones';
 import { packPhotos } from '../lib/packPhotos';
 import { sessionPhotoTile, skeletonTile } from '../components/PhotoTiles';
 
@@ -13,6 +14,11 @@ export default function Home() {
   } = useContext(AppContext);
   const { teaserGridCols, photoGap, teaserSectionStyle } = layoutFor(width);
   const isDesktop = width > 680;
+  const tones = useHeroTones(heroSlides, width);
+  // Slide controls flip between light and dark to stay legible over the active photo.
+  const ctrl = tones[activeHero] === 'dark'
+    ? { fg: '#2E2A24', pause: '#2E2A24', glow: 'drop-shadow(0 0 7.5px rgba(250,246,239,0.55))', pillGlow: '0 0 15px rgba(250,246,239,0.45)' }
+    : { fg: '#FAF6EF', pause: '#D9D9D9', glow: 'drop-shadow(0 0 7.5px rgba(250,246,239,0.8))', pillGlow: '0 0 15px rgba(250,246,239,0.6)' };
   const navWork = () => go('work'), navInvest = () => go('pricing'), navContact = () => go('contact');
 
   const heroDots = heroSlides.map((s, i) => (
@@ -49,7 +55,6 @@ export default function Home() {
       }}
     />
   ));
-  const glow = 'drop-shadow(0 0 7.5px rgba(250,246,239,0.8))';
   const desktopDots = heroSlides.map((s, i) => {
     const active = i === activeHero;
     return (
@@ -66,11 +71,11 @@ export default function Home() {
         <span
           style={{
             display: 'block', boxSizing: 'border-box', width: active ? 36 : 12, height: active ? 18 : 12,
-            borderRadius: active ? 4 : 999, border: '1px solid #FAF6EF',
-            background: active ? '#FAF6EF' : 'transparent',
-            filter: active ? 'none' : glow,
-            boxShadow: active ? '0 0 15px rgba(250,246,239,0.6)' : 'none',
-            transition: 'all .5s ease',
+            borderRadius: active ? 4 : 999, border: '1px solid ' + ctrl.fg,
+            background: active ? ctrl.fg : 'transparent',
+            filter: active ? 'none' : ctrl.glow,
+            boxShadow: active ? ctrl.pillGlow : 'none',
+            transition: 'all .5s ease, border-color 1.2s ease, background-color 1.2s ease',
           }}
         />
       </button>
@@ -108,11 +113,11 @@ export default function Home() {
         {heroLayers}
         <div style={css(`position:absolute;inset:0;background:linear-gradient(to top,rgba(40,32,24,0.06) 50.481%,rgba(40,32,24,0) 100%);`)}></div>
         <div aria-hidden="true" style={css(`position:absolute;inset:0;pointer-events:none;`)}>
-          <span style={css(`position:absolute;top:54px;bottom:54px;left:4.176%;width:1px;background:rgba(255,255,255,0.4);`)}></span>
-          <span style={css(`position:absolute;top:54px;bottom:54px;right:5.32%;width:1px;background:rgba(255,255,255,0.4);`)}></span>
-          <span style={css(`position:absolute;top:91px;left:1.43%;width:74.31%;height:1px;background:rgba(255,255,255,0.4);`)}></span>
-          <span style={css(`position:absolute;bottom:121px;left:52.29%;width:45.19%;height:1px;background:rgba(255,255,255,0.4);`)}></span>
-          <svg width="14.14" height="14.14" viewBox="0 0 14.14 14.14" style={css(`position:absolute;right:6.34%;bottom:138.8px;overflow:visible;`)}><path d="M0 0L14.14 14.14M14.14 0L0 14.14" stroke="white" strokeOpacity="0.4" fill="none"></path></svg>
+          <span style={css(`position:absolute;top:54px;bottom:54px;left:4.176%;width:1px;background:rgba(255,255,255,0.2);`)}></span>
+          <span style={css(`position:absolute;top:54px;bottom:54px;right:5.32%;width:1px;background:rgba(255,255,255,0.2);`)}></span>
+          <span style={css(`position:absolute;top:91px;left:1.43%;width:74.31%;height:1px;background:rgba(255,255,255,0.2);`)}></span>
+          <span style={css(`position:absolute;bottom:121px;left:52.29%;width:45.19%;height:1px;background:rgba(255,255,255,0.2);`)}></span>
+          <svg width="14.14" height="14.14" viewBox="0 0 14.14 14.14" style={css(`position:absolute;right:6.34%;bottom:138.8px;overflow:visible;`)}><path d="M0 0L14.14 14.14M14.14 0L0 14.14" stroke="white" strokeOpacity="0.2" fill="none"></path></svg>
         </div>
         <div style={css(`position:absolute;left:0;right:0;bottom:19%;display:flex;flex-direction:column;align-items:center;gap:1.55vw;text-align:center;pointer-events:none;color:#FAF6EF;`)}>
           <div style={css(`display:flex;align-items:flex-end;gap:1.55vw;`)}>
@@ -127,8 +132,8 @@ export default function Home() {
         <div style={css(`position:absolute;right:28px;top:27%;display:flex;flex-direction:column;align-items:flex-end;pointer-events:none;`)}>
           <div style={css(`display:flex;flex-direction:column;align-items:flex-end;margin-right:12px;pointer-events:auto;`)}>{desktopDots}</div>
           <button onClick={toggleHero} aria-label={heroToggleLabel} style={css(`pointer-events:auto;background:none;border:none;width:44px;height:44px;margin-top:36px;display:flex;align-items:center;justify-content:center;gap:5px;cursor:pointer;padding:0;`)}>
-            {heroPaused && (<svg width="12" height="18" viewBox="0 0 12 18" fill="none"><path d="M0 0L12 9L0 18V0Z" fill="#D9D9D9"></path></svg>)}
-            {heroPlaying && (<><span style={css(`display:block;width:3px;height:18px;border-radius:999px;background:#D9D9D9;`)}></span><span style={css(`display:block;width:3px;height:18px;border-radius:999px;background:#D9D9D9;`)}></span></>)}
+            {heroPaused && (<svg width="12" height="18" viewBox="0 0 12 18" fill="none"><path d="M0 0L12 9L0 18V0Z" fill={ctrl.pause}></path></svg>)}
+            {heroPlaying && (<><span style={{ display: 'block', width: 3, height: 18, borderRadius: 999, background: ctrl.pause, transition: 'background-color 1.2s ease' }}></span><span style={{ display: 'block', width: 3, height: 18, borderRadius: 999, background: ctrl.pause, transition: 'background-color 1.2s ease' }}></span></>)}
           </button>
         </div>
       </section>

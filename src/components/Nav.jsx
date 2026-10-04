@@ -16,7 +16,7 @@ export default function Nav() {
       <nav style={css(`position:sticky;top:0;z-index:50;height:94px;pointer-events:none;`)}>
         <div aria-hidden="true" style={css(`position:absolute;top:0;left:0;right:0;height:235px;background:linear-gradient(to bottom,#F1EBE1 0%,rgba(241,235,225,0.25) 65.385%,rgba(241,235,225,0) 100%);`)}></div>
         <div style={css(`position:relative;display:flex;align-items:flex-start;justify-content:space-between;padding:17px 56px;`)}>
-          <button onClick={navHome} aria-label="Hannah Fligel Photography – Home" style={css(`pointer-events:auto;position:relative;flex:none;width:60px;height:60px;padding:0;cursor:pointer;overflow:hidden;background:rgba(255,255,255,0.01);border:1px solid var(--soft);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);box-shadow:0 0 60px 30px rgba(250,246,239,0.3);font-family:'Cormorant Garamond',serif;font-weight:700;font-size:22px;letter-spacing:.44px;color:var(--ink);`)}>
+          <button onClick={navHome} aria-label="Hannah Fligel Photography – Home" style={css(`pointer-events:auto;position:relative;flex:none;width:60px;height:60px;padding:0;cursor:pointer;overflow:hidden;background:rgba(255,255,255,0.01);border:1px solid var(--soft);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);box-shadow:0 0 60px 30px rgba(250,246,239,0.3),inset 0 0 60px 30px rgba(250,246,239,0.3);font-family:'Cormorant Garamond',serif;font-weight:700;font-size:22px;letter-spacing:.44px;color:var(--ink);`)}>
             {letter('H', 16.5, 4)}{letter('F', 43, 9)}{letter('P', 28.5, 26)}
           </button>
           <div style={css(`pointer-events:auto;display:flex;align-items:center;gap:42px;`)}>
