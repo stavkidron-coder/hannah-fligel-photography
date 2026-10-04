@@ -3,6 +3,7 @@ import { AppContext } from '../hooks/useApp';
 import { css } from '../lib/css';
 import { heroSlides, testimonialsData, teaserPhotos } from '../data/content';
 import { layoutFor } from '../lib/layout';
+import HeroPagination from '../components/HeroPagination';
 import { useHeroTones } from '../hooks/useHeroTones';
 import { packPhotos } from '../lib/packPhotos';
 import { sessionPhotoTile, skeletonTile } from '../components/PhotoTiles';
@@ -17,8 +18,8 @@ export default function Home() {
   const tones = useHeroTones(heroSlides, width);
   // Slide controls flip between light and dark to stay legible over the active photo.
   const ctrl = tones[activeHero] === 'dark'
-    ? { fg: '#2E2A24', pause: '#2E2A24', glow: 'drop-shadow(0 0 7.5px rgba(250,246,239,0.55))', pillGlow: '0 0 15px rgba(250,246,239,0.45)' }
-    : { fg: '#FAF6EF', pause: '#D9D9D9', glow: 'drop-shadow(0 0 7.5px rgba(250,246,239,0.8))', pillGlow: '0 0 15px rgba(250,246,239,0.6)' };
+    ? { fg: '#2E2A24', pause: '#2E2A24', ringGlow: '0 0 7.5px rgba(250,246,239,0.55)', pillGlow: '0 0 15px rgba(250,246,239,0.45)' }
+    : { fg: '#FAF6EF', pause: '#D9D9D9', ringGlow: '0 0 7.5px rgba(250,246,239,0.8)', pillGlow: '0 0 15px rgba(250,246,239,0.6)' };
   const navWork = () => go('work'), navInvest = () => go('pricing'), navContact = () => go('contact');
 
   const heroDots = heroSlides.map((s, i) => (
@@ -55,32 +56,6 @@ export default function Home() {
       }}
     />
   ));
-  const desktopDots = heroSlides.map((s, i) => {
-    const active = i === activeHero;
-    return (
-      <button
-        key={i}
-        onClick={() => goToHero(i)}
-        aria-label={'Show slide ' + (i + 1) + ' of ' + heroSlides.length}
-        aria-current={active ? 'true' : 'false'}
-        style={{
-          display: 'flex', alignItems: 'center', justifyContent: 'flex-end', background: 'none', border: 'none',
-          padding: '16px 0 16px 16px', marginTop: i === 0 ? 0 : -16, cursor: 'pointer',
-        }}
-      >
-        <span
-          style={{
-            display: 'block', boxSizing: 'border-box', width: active ? 36 : 12, height: active ? 18 : 12,
-            borderRadius: active ? 4 : 999, border: '1px solid ' + ctrl.fg,
-            background: active ? ctrl.fg : 'transparent',
-            filter: active ? 'none' : ctrl.glow,
-            boxShadow: active ? ctrl.pillGlow : 'none',
-            transition: 'all .5s ease, border-color 1.2s ease, background-color 1.2s ease',
-          }}
-        />
-      </button>
-    );
-  });
   const heroToggleLabel = heroPaused ? 'Play slideshow' : 'Pause slideshow';
   const heroPlaying = !heroPaused;
 
@@ -130,7 +105,7 @@ export default function Home() {
           <p style={css(`margin:0;font-family:'Mulish',sans-serif;font-size:clamp(12px,.92vw,17px);font-weight:500;letter-spacing:.46em;text-transform:uppercase;text-shadow:0 0 10px #FAF6EF;white-space:nowrap;`)}>SAN DIEGO, CA</p>
         </div>
         <div style={css(`position:absolute;right:28px;top:27%;display:flex;flex-direction:column;align-items:flex-end;pointer-events:none;`)}>
-          <div style={css(`display:flex;flex-direction:column;align-items:flex-end;margin-right:12px;pointer-events:auto;`)}>{desktopDots}</div>
+          <div style={css(`display:flex;flex-direction:column;align-items:flex-end;margin-right:12px;pointer-events:auto;`)}><HeroPagination count={heroSlides.length} active={activeHero} onSelect={goToHero} ctrl={ctrl} /></div>
           <button onClick={toggleHero} aria-label={heroToggleLabel} style={css(`pointer-events:auto;background:none;border:none;width:44px;height:44px;margin-top:36px;display:flex;align-items:center;justify-content:center;gap:5px;cursor:pointer;padding:0;`)}>
             {heroPaused && (<svg width="12" height="18" viewBox="0 0 12 18" fill="none"><path d="M0 0L12 9L0 18V0Z" fill={ctrl.pause}></path></svg>)}
             {heroPlaying && (<><span style={{ display: 'block', width: 3, height: 18, borderRadius: 999, background: ctrl.pause, transition: 'background-color 1.2s ease' }}></span><span style={{ display: 'block', width: 3, height: 18, borderRadius: 999, background: ctrl.pause, transition: 'background-color 1.2s ease' }}></span></>)}
