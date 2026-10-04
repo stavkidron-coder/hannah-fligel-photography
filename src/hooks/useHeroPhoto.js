@@ -1,23 +1,38 @@
 import { useEffect, useRef, useState } from 'react';
 import { TOTAL } from '../lib/heroTiming';
 
-// Which hero photo is showing on desktop. On a slide change the old photo is
-// hidden straight away (it fades out over the first half of the morph) and
-// the new one is shown at the halfway point (fading in over the second half),
-// so the photos run back to back: never overlapping, never a held gap.
+// Desktop hero photo transition. Photos overlap, but dip through the dark
+// backdrop on the way:
+//   dip   (first half)  the old photo fades 100% -> 20% while the new one
+//                       fades in 0% -> 20%, so both sit faintly over the dark
+//   rise  (second half) the old photo fades 20% -> 0% while the new one
+//                       fades 20% -> 100%
+// A change mid-transition starts a fresh dip from wherever things are.
 export const HALF = TOTAL / 2;
+export const DIP = 0.2;
 
 export function useHeroPhoto(active) {
-  const [visible, setVisible] = useState(active);
+  const [state, setState] = useState({ from: -1, to: active, phase: 'idle' });
   const first = useRef(true);
 
   useEffect(() => {
     if (first.current) { first.current = false; return undefined; }
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { setVisible(active); return undefined; }
-    setVisible(-1);
-    const t = setTimeout(() => setVisible(active), HALF);
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setState({ from: -1, to: active, phase: 'idle' });
+      return undefined;
+    }
+    setState((s) => ({ from: s.to, to: active, phase: 'dip' }));
+    const t = setTimeout(() => setState((s) => ({ ...s, phase: 'rise' })), HALF);
     return () => clearTimeout(t);
   }, [active]);
 
-  return visible;
+  // Target opacity for each slide's layer.
+  const opacityOf = (i) => {
+    const { from, to, phase } = state;
+    if (i === to) return phase === 'dip' ? DIP : 1;
+    if (i === from) return phase === 'dip' ? DIP : 0;
+    return 0;
+  };
+
+  return { phase: state.phase, opacityOf };
 }

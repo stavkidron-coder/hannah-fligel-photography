@@ -17,11 +17,12 @@ export default function Home() {
   const { teaserGridCols, photoGap, teaserSectionStyle } = layoutFor(width);
   const isDesktop = width > 680;
   const tones = useHeroTones(heroSlides, width);
-  const shownHero = useHeroPhoto(activeHero);
+  const { phase: heroPhase, opacityOf } = useHeroPhoto(activeHero);
+  const dipping = isDesktop && heroPhase === 'dip';
   // The slide controls flip between light and dark to stay legible over the photo showing.
-  // Between photos the hero is the dark warm-brown backdrop, so they stay light.
+  // While the photos dip through the dark backdrop, they stay light.
   const fadeMs = HALF;
-  const ctrlDark = shownHero >= 0 && tones[shownHero] === 'dark';
+  const ctrlDark = !dipping && tones[activeHero] === 'dark';
   const ctrl = ctrlDark
     ? { fg: '#2E2A24', pause: '#2E2A24', fadeMs, ringGlow: '0 0 7.5px rgba(250,246,239,0.55)', pillGlow: '0 0 15px rgba(250,246,239,0.45)' }
     : { fg: '#FAF6EF', pause: '#D9D9D9', fadeMs, ringGlow: '0 0 7.5px rgba(250,246,239,0.8)', pillGlow: '0 0 15px rgba(250,246,239,0.6)' };
@@ -52,10 +53,10 @@ export default function Home() {
       key={i}
       style={{
         position: 'absolute', inset: 0,
-        opacity: (isDesktop ? i === shownHero : i === activeHero) ? 1 : 0,
-        // Desktop: the old photo fades out, then the new one fades in straight after.
+        opacity: isDesktop ? opacityOf(i) : (i === activeHero ? 1 : 0),
+        // Desktop: both photos dip to 20% over the dark backdrop, then the new one rises to full.
         transition: isDesktop
-          ? `opacity ${HALF}ms ${i === shownHero ? 'ease-out' : 'ease-in'}`
+          ? `opacity ${HALF}ms ease-in-out`
           : heroQuick.current ? 'opacity .6s ease-out' : 'opacity 2.4s ease-in-out',
         backgroundImage: `url("${encodeURI(s.src)}")`,
         backgroundSize: 'cover',
@@ -95,7 +96,8 @@ export default function Home() {
       <section onTouchStart={heroTouchStart} onTouchEnd={heroTouchEnd} aria-roledescription="carousel" style={css(`position:relative;height:100dvh;min-height:560px;margin-top:-94px;overflow:hidden;background:#0F0805;`)}>
         <div style={css(`position:absolute;inset:0;isolation:isolate;`)}>{heroLayers}</div>
         <div style={css(`position:absolute;inset:0;background:linear-gradient(to top,rgba(40,32,24,0.06) 50.481%,rgba(40,32,24,0) 100%);`)}></div>
-        <div aria-hidden="true" style={css(`position:absolute;inset:0;pointer-events:none;`)}>
+        {/* The decorative lines fade out and back in with the photos. */}
+        <div aria-hidden="true" style={{ ...css(`position:absolute;inset:0;pointer-events:none;`), opacity: dipping ? 0 : 1, transition: `opacity ${HALF}ms ease-in-out` }}>
           <span style={css(`position:absolute;top:54px;bottom:54px;left:4.176%;width:1px;background:rgba(255,255,255,0.2);`)}></span>
           <span style={css(`position:absolute;top:54px;bottom:54px;right:5.32%;width:1px;background:rgba(255,255,255,0.2);`)}></span>
           <span style={css(`position:absolute;top:91px;left:1.43%;width:74.31%;height:1px;background:rgba(255,255,255,0.2);`)}></span>
