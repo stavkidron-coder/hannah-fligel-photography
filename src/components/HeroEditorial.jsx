@@ -18,7 +18,7 @@ const slides = [
 // Scroll timeline (px of scroll after the hero pins): the row walks left until the last photo is flush right,
 // then a short hold, then the photos on screen fade out one after another, left to right, and the hero unpins. The nav logo animation starts together with the fade.
 const WALK_PACE = 1.35;  // px of scroll per px the row moves; above 1 slows the walk down
-const FADE_BLUR = 16;    // px of blur a photo reaches as it finishes fading out
+const PHOTO_GAP = 0;     // px between photos (the Figma design has 20)
 const HOLD_VH = 0.5;     // buffer after the walk ends where the last photos just sit, so one big scroll doesn't run straight into the fade
 const FADE_VH = 1.5;       // fade-out phase length, in screen heights
 const MIN_LOGO_PX = 300; // shortest the logo animation may be, if the next section is very short
@@ -34,7 +34,7 @@ export default function HeroEditorial() {
 
   useLayoutEffect(() => {
     const els = [...row.current.querySelectorAll('.hero-ed-item')];
-    const items = els.map((el) => ({ el, photo: el.querySelector('.hero-ed-photo'), rank: -1 }));
+    const items = els.map((el) => ({ el, rank: -1 }));
     let L = null; // layout numbers
 
     // The highlighted photo is whichever one is under the mouse. CSS :hover doesn't refresh while the row slides under a still
@@ -107,7 +107,6 @@ export default function HeroEditorial() {
         }
         it.el.style.pointerEvents = q > 0 ? 'none' : '';
         it.el.style.opacity = q > 0 ? String(1 - q) : '';
-        it.photo.style.filter = q > 0 ? `blur(${(q * FADE_BLUR).toFixed(1)}px)` : '';
       });
       refreshActive();
     }
@@ -127,7 +126,7 @@ export default function HeroEditorial() {
   return (
     <section ref={wrap} id="hero-editorial" aria-label="Featured photography" style={css(`position:relative;height:400vh;margin-bottom:calc(-1 * clamp(80px,11vw,128px));`)}>
       <div ref={stage} style={css(`position:sticky;top:${NAV_EDITORIAL_H};height:calc(100dvh - ${NAV_EDITORIAL_H});min-height:480px;overflow:hidden;`)}>
-        <div ref={row} className="hero-editorial-row" style={css(`display:flex;gap:20px;height:100%;will-change:transform;`)}>
+        <div ref={row} className="hero-editorial-row" style={css(`display:flex;gap:${PHOTO_GAP}px;height:100%;will-change:transform;`)}>
           {slides.map((s) => (
             <button key={s.label} className="hero-ed-item" onClick={() => open(s.cat)} aria-label={`View ${s.label} work`} style={css(`flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:3px;background:none;border:none;padding:0;cursor:pointer;`)}>
               <span className="hero-ed-label" aria-hidden="true" style={css(`padding-right:12px;font-family:'Mulish',sans-serif;font-size:12px;line-height:15px;color:#000;`)}>{s.label}</span>
