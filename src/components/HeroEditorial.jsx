@@ -132,9 +132,8 @@ export default function HeroEditorial() {
     };
   }, []);
 
-  // margin-bottom pulls the next section's top padding (clamp(80px,11vw,128px)) up under the empty hero, so its text starts rising as soon as the photos have faded.
   return (
-    <section ref={wrap} id="hero-editorial" aria-label="Featured photography" style={css(`position:relative;height:400vh;margin-bottom:calc(-1 * clamp(80px,11vw,128px));`)}>
+    <section ref={wrap} id="hero-editorial" aria-label="Featured photography" style={css(`position:relative;height:400vh;`)}>
       <div ref={stage} style={css(`position:sticky;top:${NAV_EDITORIAL_H};height:calc(100dvh - ${NAV_EDITORIAL_H});min-height:480px;overflow:hidden;`)}>
         <div ref={row} className="hero-editorial-row" style={css(`display:flex;gap:${PHOTO_GAP}px;height:100%;will-change:transform;`)}>
           {slides.map((s, i) => (

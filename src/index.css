@@ -40,3 +40,6 @@ html[data-intro] .hero-ed-item { animation-play-state: paused; }
 
 /* Stop at the top/bottom instead of rubber-banding. */
 html, body { overscroll-behavior-y: none; }
+
+/* The intro section is one screen tall; scrolling that ends near it settles with it filling the viewport, so the next section stays out of sight. */
+html { scroll-snap-type: y proximity; }
