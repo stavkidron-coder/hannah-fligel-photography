@@ -1,6 +1,7 @@
 import { useContext, useLayoutEffect, useRef } from 'react';
 import { AppContext } from '../hooks/useApp';
 import { css } from '../lib/css';
+import { smoothY, subscribeSmoothScroll } from '../lib/smoothScroll';
 
 // Everything scales from the Figma frame (1748px wide): 110px nav height = 6.29vw, 64px wordmark = 3.66vw.
 export const NAV_EDITORIAL_H = 'max(72px,6.29vw)';
@@ -23,7 +24,7 @@ const ease = (t) => t * t * (3 - 2 * t);
 const lerp = (a, b, t) => a + (b - a) * t;
 
 // Desktop nav for the editorial design (Figma "Nav", node 31:397). On Home the "Hannah Fligel photography"
-// wordmark collapses into the HFP logo as the hero scrolls away; elsewhere the finished logo shows.
+// wordmark collapses into the HFP logo once the hero photos have turned to dust; elsewhere the finished logo shows.
 export default function NavEditorial() {
   const { page, go } = useContext(AppContext);
   const links = [['Home', 'home'], ['Work', 'work'], ['About', 'about'], ['Pricing', 'pricing'], ['Contact', 'contact']];
@@ -52,13 +53,14 @@ export default function NavEditorial() {
       geo.current = g;
     };
 
+    // The hero publishes where (in page scroll) the logo animation starts and ends: after its photos have turned to dust.
     const progress = () => {
       if (!isHome) return 1;
       const hero = document.getElementById('hero-editorial');
       if (!hero) return 1;
-      const finalNav = 2 * Math.max(12, window.innerWidth * 0.0097) + LOGO;
-      const end = hero.getBoundingClientRect().bottom + window.scrollY - finalNav;
-      return end > 0 ? clamp01(window.scrollY / end) : 1;
+      const start = parseFloat(hero.dataset.logoStart), end = parseFloat(hero.dataset.logoEnd);
+      if (!(end > start)) return 0;
+      return clamp01((smoothY() - start) / (end - start));
     };
 
     const apply = () => {
@@ -84,10 +86,11 @@ export default function NavEditorial() {
 
     const remeasure = () => { measure(); apply(); };
     remeasure();
-    window.addEventListener('scroll', apply, { passive: true });
+    const unsub = subscribeSmoothScroll(apply);
+    window.addEventListener('hero-editorial-layout', apply);
     window.addEventListener('resize', remeasure);
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(remeasure);
-    return () => { window.removeEventListener('scroll', apply); window.removeEventListener('resize', remeasure); };
+    return () => { unsub(); window.removeEventListener('hero-editorial-layout', apply); window.removeEventListener('resize', remeasure); };
   }, [isHome]);
 
   const ink = 'var(--ink)';
