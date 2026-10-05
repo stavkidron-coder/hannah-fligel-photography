@@ -20,7 +20,7 @@ const slides = [
 const WALK_PACE = 1.35;  // px of scroll per px the row moves; above 1 slows the walk down
 const FADE_BLUR = 16;    // px of blur a photo reaches as it finishes fading out
 const HOLD_VH = 0.5;     // buffer after the walk ends where the last photos just sit, so one big scroll doesn't run straight into the fade
-const FADE_VH = 1;       // fade-out phase length, in screen heights
+const FADE_VH = 1.5;       // fade-out phase length, in screen heights
 const MIN_LOGO_PX = 300; // shortest the logo animation may be, if the next section is very short
 
 const clamp01 = (v) => Math.min(1, Math.max(0, v));
