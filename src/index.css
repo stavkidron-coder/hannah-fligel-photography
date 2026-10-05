@@ -24,6 +24,10 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 .hero-ed-label { letter-spacing: .44px; }
 .hero-ed-dim { position: absolute; inset: 0; background: #000; opacity: 0; pointer-events: none; transition: opacity .4s ease; }
 .hero-ed-item:focus-visible { outline: none; }
+/* On load the photos fade in left to right. Backwards fill only: once it ends, the scroll-driven inline opacity takes over for the fade-out. */
+@keyframes heroEdIn { from { opacity: 0; } to { opacity: 1; } }
+.hero-ed-item { animation: heroEdIn 1.4s ease-out calc(.2s + var(--i, 0) * .28s) backwards; }
+@media (prefers-reduced-motion: reduce) { .hero-ed-item { animation: none; } }
 @media (hover: hover) {
   /* data-active is set by the hero's script from the pointer position, so it keeps up while the row scrolls under a still mouse. */
   .hero-editorial-row[data-active] .hero-ed-item:not([data-active]) .hero-ed-dim { opacity: .5; }

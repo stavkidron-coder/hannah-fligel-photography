@@ -127,8 +127,8 @@ export default function HeroEditorial() {
     <section ref={wrap} id="hero-editorial" aria-label="Featured photography" style={css(`position:relative;height:400vh;margin-bottom:calc(-1 * clamp(80px,11vw,128px));`)}>
       <div ref={stage} style={css(`position:sticky;top:${NAV_EDITORIAL_H};height:calc(100dvh - ${NAV_EDITORIAL_H});min-height:480px;overflow:hidden;`)}>
         <div ref={row} className="hero-editorial-row" style={css(`display:flex;gap:${PHOTO_GAP}px;height:100%;will-change:transform;`)}>
-          {slides.map((s) => (
-            <button key={s.label} className="hero-ed-item" onClick={() => open(s.cat)} aria-label={`View ${s.label} work`} style={css(`flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:3px;background:none;border:none;padding:0;cursor:pointer;`)}>
+          {slides.map((s, i) => (
+            <button key={s.label} className="hero-ed-item" onClick={() => open(s.cat)} aria-label={`View ${s.label} work`} style={{ ...css(`flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:3px;background:none;border:none;padding:0;cursor:pointer;`), '--i': i }}>
               <span className="hero-ed-label" aria-hidden="true" style={css(`padding-right:12px;font-family:'Mulish',sans-serif;font-size:12px;line-height:15px;color:#000;`)}>{s.label}</span>
               <span className="hero-ed-photo" style={{ position: 'relative', display: 'block', height: `max(${imgH}, 440px)`, aspectRatio: s.ratio }}>
                 <img src={s.src} alt="" draggable="false" style={{ display: 'block', width: '100%', height: '100%', objectFit: 'cover' }} />
