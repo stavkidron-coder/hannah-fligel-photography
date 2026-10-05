@@ -86,9 +86,10 @@ export default function HeroEditorial() {
       wrap.current.dataset.logoStart = String(pinY + walk + hold);
       // The logo animation runs until the next section (the intro text) is fully on screen: its bottom edge reaching the bottom of the viewport.
       const next = wrap.current.nextElementSibling;
-      const nextBottom = next ? next.getBoundingClientRect().bottom + window.scrollY : 0;
+      // If the next section is a pinned scene (data-scene) the logo finishes as that scene starts, otherwise when the section's bottom edge reaches the bottom of the viewport.
+      const nextEnd = !next ? 0 : next.dataset.scene ? next.getBoundingClientRect().top + window.scrollY : next.getBoundingClientRect().bottom + window.scrollY - vh;
       const logoStart = pinY + walk + hold;
-      wrap.current.dataset.logoEnd = String(Math.max(logoStart + MIN_LOGO_PX, nextBottom - vh));
+      wrap.current.dataset.logoEnd = String(Math.max(logoStart + MIN_LOGO_PX, nextEnd));
       window.dispatchEvent(new Event('hero-editorial-layout'));
       update();
     };
