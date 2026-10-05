@@ -37,6 +37,30 @@ export default function HeroEditorial() {
     const items = els.map((el) => ({ el, photo: el.querySelector('.hero-ed-photo'), rank: -1 }));
     let L = null; // layout numbers
 
+    // The highlighted photo is whichever one is under the mouse. CSS :hover doesn't refresh while the row slides under a still
+    // pointer, so remember the pointer and re-run the hit test on every animation frame.
+    let pointer = null;
+    const refreshActive = () => {
+      let active = null;
+      if (pointer) {
+        active = items.find((it) => {
+          if (it.el.style.pointerEvents === 'none') return false;
+          const r = it.el.getBoundingClientRect();
+          return pointer.x >= r.left && pointer.x <= r.right && pointer.y >= r.top && pointer.y <= r.bottom;
+        }) || null;
+      }
+      items.forEach((it) => { if (it === active) it.el.dataset.active = 'true'; else delete it.el.dataset.active; });
+      if (active) row.current.dataset.active = 'true'; else delete row.current.dataset.active;
+    };
+    const onPointerMove = (e) => {
+      if (e.pointerType === 'touch') return;
+      pointer = { x: e.clientX, y: e.clientY };
+      refreshActive();
+    };
+    const onPointerLeave = () => { pointer = null; refreshActive(); };
+    stage.current.addEventListener('pointermove', onPointerMove);
+    stage.current.addEventListener('pointerleave', onPointerLeave);
+
     const layout = () => {
       const vw = window.innerWidth, vh = window.innerHeight;
       const navH = Math.max(72, vw * 0.0629);
@@ -85,6 +109,7 @@ export default function HeroEditorial() {
         it.el.style.opacity = q > 0 ? String(1 - q) : '';
         it.photo.style.filter = q > 0 ? `blur(${(q * FADE_BLUR).toFixed(1)}px)` : '';
       });
+      refreshActive();
     }
 
     layout();
@@ -92,6 +117,8 @@ export default function HeroEditorial() {
     window.addEventListener('resize', layout);
     return () => {
       unsub();
+      stage.current && stage.current.removeEventListener('pointermove', onPointerMove);
+      stage.current && stage.current.removeEventListener('pointerleave', onPointerLeave);
       window.removeEventListener('resize', layout);
     };
   }, []);

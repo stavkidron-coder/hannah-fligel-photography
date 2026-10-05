@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { AppContext, useApp } from './hooks/useApp';
 import { css } from './lib/css';
@@ -18,6 +19,11 @@ export default function App() {
   // The original parsed the hash leniently (unknown hashes land on Home);
   // `pathFor` hands React Router the canonical path for that result.
   const location = pathFor(app.route);
+  // Lets global CSS target the editorial design only (e.g. no overscroll bounce).
+  useEffect(() => {
+    document.documentElement.dataset.design = app.design;
+    return () => { delete document.documentElement.dataset.design; };
+  }, [app.design]);
   return (
     <AppContext.Provider value={app}>
       <div style={css("--cream:#F1EBE1;--paper:#FAF6EF;--ink:#2E2A24;--soft:#5B5247;--muted:#6F6151;--line:#DED1BF;--ph1:#E7DDCC;--ph2:#EEE6D7;background:var(--cream);color:var(--ink);font-family:'EB Garamond',Georgia,serif;min-height:100vh;")}>
