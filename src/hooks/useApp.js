@@ -26,14 +26,6 @@ export function useApp() {
   const [testimonialFading, setTestimonialFading] = useState(false);
   const [visibleCount, setVisibleCount] = useState({});
   const [animTick, setAnimTick] = useState(0);
-  // Which hero + nav design is showing: 'classic' (original) or 'editorial' (Figma node 31:371).
-  const [design, setDesignState] = useState(() => {
-    try { return localStorage.getItem('hfp-design') === 'editorial' ? 'editorial' : 'classic'; } catch (e) { return 'classic'; }
-  });
-  const setDesign = useCallback((d) => {
-    setDesignState(d);
-    try { localStorage.setItem('hfp-design', d); } catch (e) {}
-  }, []);
   const contact = useContactForm();
 
   const reducedMotion = useRef(false);
@@ -287,6 +279,5 @@ export function useApp() {
     orientationCache: orientationCache.current, ensureOrientations,
     go, setCat, openSession, closeSession,
     contact,
-    design, setDesign,
   };
 }

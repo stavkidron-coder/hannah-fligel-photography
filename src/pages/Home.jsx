@@ -3,9 +3,6 @@ import { AppContext } from '../hooks/useApp';
 import { css } from '../lib/css';
 import { heroSlides, testimonialsData, teaserPhotos } from '../data/content';
 import { layoutFor } from '../lib/layout';
-import { useHeroPhoto, HALF } from '../hooks/useHeroPhoto';
-import HeroPagination from '../components/HeroPagination';
-import { useHeroTones } from '../hooks/useHeroTones';
 import { packPhotos } from '../lib/packPhotos';
 import HeroEditorial from '../components/HeroEditorial';
 import { sessionPhotoTile, skeletonTile } from '../components/PhotoTiles';
@@ -13,20 +10,10 @@ import { sessionPhotoTile, skeletonTile } from '../components/PhotoTiles';
 export default function Home() {
   const {
     width, go, activeHero, heroPaused, heroQuick, goToHero, toggleHero, heroTouchStart, heroTouchEnd,
-    activeTestimonialIndex, testimonialFading, selectTestimonial, orientationCache, design,
+    activeTestimonialIndex, testimonialFading, selectTestimonial, orientationCache,
   } = useContext(AppContext);
   const { teaserGridCols, photoGap, teaserSectionStyle } = layoutFor(width);
   const isDesktop = width > 680;
-  const tones = useHeroTones(heroSlides, width);
-  const { phase: heroPhase, opacityOf } = useHeroPhoto(activeHero);
-  const dipping = isDesktop && heroPhase === 'dip';
-  // The slide controls flip between light and dark to stay legible over the photo showing.
-  // While the photos dip through the dark backdrop, they stay light.
-  const fadeMs = HALF;
-  const ctrlDark = !dipping && tones[activeHero] === 'dark';
-  const ctrl = ctrlDark
-    ? { fg: '#2E2A24', pause: '#2E2A24', fadeMs, ringGlow: '0 0 7.5px rgba(250,246,239,0.55)', pillGlow: '0 0 15px rgba(250,246,239,0.45)' }
-    : { fg: '#FAF6EF', pause: '#D9D9D9', fadeMs, ringGlow: '0 0 7.5px rgba(250,246,239,0.8)', pillGlow: '0 0 15px rgba(250,246,239,0.6)' };
   const navWork = () => go('work'), navInvest = () => go('pricing'), navContact = () => go('contact');
 
   const heroDots = heroSlides.map((s, i) => (
@@ -54,15 +41,12 @@ export default function Home() {
       key={i}
       style={{
         position: 'absolute', inset: 0,
-        opacity: isDesktop ? opacityOf(i) : (i === activeHero ? 1 : 0),
-        // Desktop: both photos dip to 20% over the dark backdrop, then the new one rises to full.
-        transition: isDesktop
-          ? `opacity ${HALF}ms ease-in-out`
-          : heroQuick.current ? 'opacity .6s ease-out' : 'opacity 2.4s ease-in-out',
+        opacity: i === activeHero ? 1 : 0,
+        transition: heroQuick.current ? 'opacity .6s ease-out' : 'opacity 2.4s ease-in-out',
         backgroundImage: `url("${encodeURI(s.src)}")`,
         backgroundSize: 'cover',
         backgroundPosition: s.pos,
-        backgroundColor: isDesktop ? 'transparent' : 'var(--paper)',
+        backgroundColor: 'var(--paper)',
       }}
     />
   ));
@@ -93,38 +77,8 @@ export default function Home() {
 
   return (
     <main id="main">
-      {isDesktop && design === 'editorial' ? (
+      {isDesktop ? (
       <HeroEditorial />
-      ) : isDesktop ? (
-      <section onTouchStart={heroTouchStart} onTouchEnd={heroTouchEnd} aria-roledescription="carousel" style={css(`position:relative;height:100dvh;min-height:560px;margin-top:-94px;overflow:hidden;background:#0F0805;`)}>
-        <div style={css(`position:absolute;inset:0;isolation:isolate;`)}>{heroLayers}</div>
-        <div style={css(`position:absolute;inset:0;background:linear-gradient(to top,rgba(40,32,24,0.06) 50.481%,rgba(40,32,24,0) 100%);`)}></div>
-        {/* The decorative lines fade out and back in with the photos. */}
-        <div aria-hidden="true" style={{ ...css(`position:absolute;inset:0;pointer-events:none;`), opacity: dipping ? 0 : 1, transition: `opacity ${HALF}ms ease-in-out` }}>
-          <span style={css(`position:absolute;top:54px;bottom:54px;left:4.176%;width:1px;background:rgba(255,255,255,0.2);`)}></span>
-          <span style={css(`position:absolute;top:54px;bottom:54px;right:5.32%;width:1px;background:rgba(255,255,255,0.2);`)}></span>
-          <span style={css(`position:absolute;top:91px;left:1.43%;width:74.31%;height:1px;background:rgba(255,255,255,0.2);`)}></span>
-          <span style={css(`position:absolute;bottom:121px;left:52.29%;width:45.19%;height:1px;background:rgba(255,255,255,0.2);`)}></span>
-          <svg width="14.14" height="14.14" viewBox="0 0 14.14 14.14" style={css(`position:absolute;right:6.34%;bottom:138.8px;overflow:visible;`)}><path d="M0 0L14.14 14.14M14.14 0L0 14.14" stroke="white" strokeOpacity="0.2" fill="none"></path></svg>
-        </div>
-        <div style={css(`position:absolute;left:0;right:0;bottom:19%;display:flex;flex-direction:column;align-items:center;gap:1.55vw;text-align:center;pointer-events:none;color:#FAF6EF;`)}>
-          <div style={css(`display:flex;align-items:flex-end;gap:1.55vw;`)}>
-            <h1 style={css(`margin:0;font-family:'Cormorant Garamond',serif;font-weight:400;font-size:clamp(48px,6.29vw,120px);line-height:1;letter-spacing:.01em;white-space:nowrap;text-shadow:0 0 40px rgba(250,246,239,0.8);`)}>Hannah Fligel<span style={css(`position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);`)}> Photography</span></h1>
-            <div aria-hidden="true" style={css(`display:flex;align-items:flex-end;font-size:clamp(48px,6.29vw,120px);`)}>
-              <span style={css(`display:block;box-sizing:border-box;width:.364em;height:.636em;margin-right:-.21em;border-left:2px solid currentColor;border-top:2px solid currentColor;border-top-left-radius:.18em;filter:drop-shadow(0 0 7.5px rgba(250,246,239,0.8));`)}></span>
-              <span style={css(`font-family:'Cormorant Garamond',serif;font-weight:500;font-size:.4366em;line-height:normal;letter-spacing:.0229em;white-space:nowrap;text-shadow:0 0 20px rgba(251,248,242,0.8);`)}>photography</span>
-            </div>
-          </div>
-          <p style={css(`margin:0;font-family:'Mulish',sans-serif;font-size:clamp(12px,.92vw,17px);font-weight:500;letter-spacing:.46em;text-transform:uppercase;text-shadow:0 0 10px #FAF6EF;white-space:nowrap;`)}>SAN DIEGO, CA</p>
-        </div>
-        <div style={css(`position:absolute;right:28px;top:27%;display:flex;flex-direction:column;align-items:flex-end;pointer-events:none;`)}>
-          <div style={css(`display:flex;flex-direction:column;align-items:flex-end;margin-right:12px;pointer-events:auto;`)}><HeroPagination count={heroSlides.length} active={activeHero} onSelect={goToHero} ctrl={ctrl} /></div>
-          <button onClick={toggleHero} aria-label={heroToggleLabel} style={css(`pointer-events:auto;background:none;border:none;width:44px;height:44px;margin-top:36px;display:flex;align-items:center;justify-content:center;gap:5px;cursor:pointer;padding:0;`)}>
-            {heroPaused && (<svg width="12" height="18" viewBox="0 0 12 18" fill="none"><path d="M0 0L12 9L0 18V0Z" fill={ctrl.pause}></path></svg>)}
-            {heroPlaying && (<><span style={{ display: 'block', width: 3, height: 18, borderRadius: 999, background: ctrl.pause, transition: `background-color ${fadeMs}ms ease-in-out` }}></span><span style={{ display: 'block', width: 3, height: 18, borderRadius: 999, background: ctrl.pause, transition: `background-color ${fadeMs}ms ease-in-out` }}></span></>)}
-          </button>
-        </div>
-      </section>
       ) : (
       <section onTouchStart={heroTouchStart} onTouchEnd={heroTouchEnd} aria-roledescription="carousel" style={css(`position:relative;height:min(calc(100dvh - 67px),128vw);min-height:430px;overflow:hidden;background:var(--paper);touch-action:pan-y;`)}>
         {heroLayers}

@@ -34,5 +34,5 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 }
 .hero-editorial-row:has(.hero-ed-item:focus-visible) .hero-ed-item:not(:focus-visible) .hero-ed-dim { opacity: .5; }
 
-/* Editorial only: stop at the top/bottom instead of rubber-banding. */
-html[data-design="editorial"], html[data-design="editorial"] body { overscroll-behavior-y: none; }
+/* Stop at the top/bottom instead of rubber-banding. */
+html, body { overscroll-behavior-y: none; }
