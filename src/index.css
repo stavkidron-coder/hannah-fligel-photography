@@ -27,6 +27,8 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 /* On load the photos fade in left to right. Backwards fill only: once it ends, the scroll-driven inline opacity takes over for the fade-out. */
 @keyframes heroEdIn { from { opacity: 0; } to { opacity: 1; } }
 .hero-ed-item { animation: heroEdIn 1.4s ease-out calc(.2s + var(--i, 0) * .28s) backwards; }
+/* While the intro cover is up, hold the photos at their start state; removing data-intro lets the fade-in begin. */
+html[data-intro] .hero-ed-item { animation-play-state: paused; }
 @media (prefers-reduced-motion: reduce) { .hero-ed-item { animation: none; } }
 @media (hover: hover) {
   /* data-active is set by the hero's script from the pointer position, so it keeps up while the row scrolls under a still mouse. */
