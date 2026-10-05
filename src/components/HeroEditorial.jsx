@@ -34,7 +34,7 @@ export default function HeroEditorial() {
 
   useLayoutEffect(() => {
     const els = [...row.current.querySelectorAll('.hero-ed-item')];
-    const items = els.map((el) => ({ el, rank: -1 }));
+    const items = els.map((el) => ({ el, rank: -1, label: el.querySelector('.hero-ed-label'), labelW: 0 }));
     let L = null; // layout numbers
 
     // The highlighted photo is whichever one is under the mouse. CSS :hover doesn't refresh while the row slides under a still
@@ -67,6 +67,7 @@ export default function HeroEditorial() {
       const stageH = Math.max(480, vh - navH);
       stage.current.style.top = `${navH}px`;
       stage.current.style.height = `${stageH}px`;
+      items.forEach((it) => { it.labelW = it.label.offsetWidth; });
       const last = els[els.length - 1];
       const rowW = last.offsetLeft + last.offsetWidth;
       const travel = Math.max(0, rowW - vw);
@@ -95,7 +96,16 @@ export default function HeroEditorial() {
     function update(y = smoothY()) {
       if (!L) return;
       const s = y - L.pinY;
-      row.current.style.transform = `translate3d(${-Math.min(Math.max(s / WALK_PACE, 0), L.travel)}px,0,0)`;
+      const tx = -Math.min(Math.max(s / WALK_PACE, 0), L.travel);
+      row.current.style.transform = `translate3d(${tx}px,0,0)`;
+      // A photo's label sits at its right edge. While the photo is cut off at the right of the screen the label stays on screen,
+      // but never leaves its own photo, so a photo that is only just peeking in takes its label with it.
+      const vw = stage.current.clientWidth;
+      items.forEach((it) => {
+        const left = it.el.offsetLeft + tx, right = left + it.el.offsetWidth;
+        const dx = Math.max(Math.min(right, vw), left + it.labelW) - right;
+        it.label.style.transform = dx ? `translate3d(${dx}px,0,0)` : '';
+      });
       const d = clamp01((s - L.walk - L.hold) / L.fade);
       // Each on-screen photo gets a window of the fade phase, staggered left to right with overlap.
       const w = Math.min(1, 1.6 / Math.max(L.n, 1));
@@ -129,7 +139,7 @@ export default function HeroEditorial() {
         <div ref={row} className="hero-editorial-row" style={css(`display:flex;gap:${PHOTO_GAP}px;height:100%;will-change:transform;`)}>
           {slides.map((s, i) => (
             <button key={s.label} className="hero-ed-item" onClick={() => open(s.cat)} aria-label={`View ${s.label} work`} style={{ ...css(`flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:3px;background:none;border:none;padding:0;cursor:pointer;`), '--i': i }}>
-              <span className="hero-ed-label" aria-hidden="true" style={css(`padding-right:12px;font-family:'Mulish',sans-serif;font-size:12px;line-height:15px;color:#000;`)}>{s.label}</span>
+              <span className="hero-ed-label" aria-hidden="true" style={css(`padding-right:12px;font-family:'Mulish',sans-serif;font-size:12px;font-weight:600;line-height:15px;`)}>{s.label}</span>
               <span className="hero-ed-photo" style={{ position: 'relative', display: 'block', height: `max(${imgH}, 440px)`, aspectRatio: s.ratio }}>
                 <img src={s.src} alt="" draggable="false" style={{ display: 'block', width: '100%', height: '100%', objectFit: 'cover' }} />
                 <span aria-hidden="true" className="hero-ed-dim"></span>

@@ -21,7 +21,9 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 .nav-editorial-link[aria-current="page"] .nav-editorial-line { transform: scaleX(1); transform-origin: left center; }
 
 /* Editorial hero hover: the hovered photo stays bright, the others dim. */
-.hero-ed-label { letter-spacing: .44px; }
+/* Same as the nav links, minus the uppercase. Light until its photo is hovered. */
+.hero-ed-label { letter-spacing: 2.4px; color: rgba(46,42,36,.7); transition: color .4s ease; }
+.hero-ed-item[data-active] .hero-ed-label, .hero-ed-item:focus-visible .hero-ed-label { color: var(--ink); }
 .hero-ed-dim { position: absolute; inset: 0; background: #000; opacity: 0; pointer-events: none; transition: opacity .4s ease; }
 .hero-ed-item:focus-visible { outline: none; }
 /* On load the photos fade in left to right. Backwards fill only: once it ends, the scroll-driven inline opacity takes over for the fade-out. */
