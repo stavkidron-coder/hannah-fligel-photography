@@ -19,3 +19,19 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 .nav-editorial-link:hover .nav-editorial-line,
 .nav-editorial-link:focus-visible .nav-editorial-line,
 .nav-editorial-link[aria-current="page"] .nav-editorial-line { transform: scaleX(1); transform-origin: left center; }
+
+/* Editorial hero hover: the hovered photo stays bright, the others dim, and its label opens up. */
+/* Letters trail leftward like cars in traffic. --i is a letter's position from the start, --n its distance from the end.
+   Every letter moves at the same constant speed (1.56px per --step, opening the .44px spacing to 2px), so a letter travels for
+   --n steps and starts --i steps in: the first letter leads, the last stays put, and all of them arrive together. Because each
+   gap only ever opens by one step at a time, nothing overshoots. */
+.hero-ed-label { --step: 35ms; letter-spacing: .44px; }
+.hero-ed-char { display: inline-block; transition: transform calc(var(--n) * var(--step)) linear calc(var(--i) * var(--step)); }
+.hero-ed-dim { position: absolute; inset: 0; background: #000; opacity: 0; pointer-events: none; transition: opacity .4s ease; }
+.hero-ed-item:focus-visible { outline: none; }
+@media (hover: hover) {
+  .hero-editorial-row:has(.hero-ed-item:hover) .hero-ed-item:not(:hover) .hero-ed-dim { opacity: .5; }
+  .hero-ed-item:hover .hero-ed-char { transform: translateX(calc(var(--n) * -1.56px)); }
+}
+.hero-editorial-row:has(.hero-ed-item:focus-visible) .hero-ed-item:not(:focus-visible) .hero-ed-dim { opacity: .5; }
+.hero-ed-item:focus-visible .hero-ed-char { transform: translateX(calc(var(--n) * -1.56px)); }
