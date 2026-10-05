@@ -7,12 +7,13 @@ import { useHeroPhoto, HALF } from '../hooks/useHeroPhoto';
 import HeroPagination from '../components/HeroPagination';
 import { useHeroTones } from '../hooks/useHeroTones';
 import { packPhotos } from '../lib/packPhotos';
+import HeroEditorial from '../components/HeroEditorial';
 import { sessionPhotoTile, skeletonTile } from '../components/PhotoTiles';
 
 export default function Home() {
   const {
     width, go, activeHero, heroPaused, heroQuick, goToHero, toggleHero, heroTouchStart, heroTouchEnd,
-    activeTestimonialIndex, testimonialFading, selectTestimonial, orientationCache,
+    activeTestimonialIndex, testimonialFading, selectTestimonial, orientationCache, design,
   } = useContext(AppContext);
   const { teaserGridCols, photoGap, teaserSectionStyle } = layoutFor(width);
   const isDesktop = width > 680;
@@ -92,7 +93,9 @@ export default function Home() {
 
   return (
     <main id="main">
-      {isDesktop ? (
+      {isDesktop && design === 'editorial' ? (
+      <HeroEditorial />
+      ) : isDesktop ? (
       <section onTouchStart={heroTouchStart} onTouchEnd={heroTouchEnd} aria-roledescription="carousel" style={css(`position:relative;height:100dvh;min-height:560px;margin-top:-94px;overflow:hidden;background:#0F0805;`)}>
         <div style={css(`position:absolute;inset:0;isolation:isolate;`)}>{heroLayers}</div>
         <div style={css(`position:absolute;inset:0;background:linear-gradient(to top,rgba(40,32,24,0.06) 50.481%,rgba(40,32,24,0) 100%);`)}></div>

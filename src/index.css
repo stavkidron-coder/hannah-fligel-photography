@@ -10,3 +10,6 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 .skip-link:focus{left:12px;top:12px;background:#2E2A24;color:#FBF8F2;padding:12px 18px;border-radius:8px;font-family:'Mulish',sans-serif;font-size:13px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;}
 @keyframes cardFadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
 @keyframes skeletonPulse{0%,100%{background-color:var(--ph1);}50%{background-color:var(--ph2);}}
+
+.hero-editorial-row { scrollbar-width: none; }
+.hero-editorial-row::-webkit-scrollbar { display: none; }

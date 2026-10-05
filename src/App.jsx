@@ -3,6 +3,8 @@ import { AppContext, useApp } from './hooks/useApp';
 import { css } from './lib/css';
 import { pathFor } from './lib/routes';
 import Nav from './components/Nav';
+import NavEditorial from './components/NavEditorial';
+import DesignToggle from './components/DesignToggle';
 import MobileMenu from './components/MobileMenu';
 import Footer from './components/Footer';
 import Home from './pages/Home';
@@ -22,7 +24,7 @@ export default function App() {
 
         <a href="#main" className="skip-link">Skip to content</a>
 
-        <Nav />
+        {app.design === 'editorial' && app.width > 680 ? <NavEditorial /> : <Nav />}
         <MobileMenu />
 
         <Routes location={location}>
@@ -34,6 +36,7 @@ export default function App() {
         </Routes>
 
         <Footer />
+        <DesignToggle />
       </div>
     </AppContext.Provider>
   );
