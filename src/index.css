@@ -13,3 +13,9 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 
 .hero-editorial-row { scrollbar-width: none; }
 .hero-editorial-row::-webkit-scrollbar { display: none; }
+
+/* Editorial nav: the underline fills in from the left on hover/focus and drains out to the right. The current page stays filled. */
+.nav-editorial-line { position: absolute; left: 0; right: 0; bottom: -3px; height: 1px; background: var(--ink); transform: scaleX(0); transform-origin: right center; transition: transform .45s cubic-bezier(.65,0,.35,1); }
+.nav-editorial-link:hover .nav-editorial-line,
+.nav-editorial-link:focus-visible .nav-editorial-line,
+.nav-editorial-link[aria-current="page"] .nav-editorial-line { transform: scaleX(1); transform-origin: left center; }

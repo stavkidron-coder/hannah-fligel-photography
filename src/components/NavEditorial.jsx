@@ -114,7 +114,7 @@ export default function NavEditorial() {
       </button>
       <div style={css(`position:relative;pointer-events:auto;display:flex;align-items:center;gap:clamp(14px,2.4vw,42px);`)}>
         {links.map(([label, key]) => (
-          <button key={key} onClick={() => go(key)} aria-current={page === key ? 'page' : undefined} style={css(`background:none;border:none;cursor:pointer;padding:8px 0;font-family:'Mulish',sans-serif;font-size:12px;font-weight:600;letter-spacing:2.4px;text-transform:uppercase;color:var(--ink);position:relative;`)}>{label}{page === key && (<span style={css(`position:absolute;left:0;right:0;bottom:-3px;height:1px;background:var(--ink);`)}></span>)}</button>
+          <button key={key} className="nav-editorial-link" onClick={() => go(key)} aria-current={page === key ? 'page' : undefined} style={css(`background:none;border:none;cursor:pointer;padding:8px 0;font-family:'Mulish',sans-serif;font-size:12px;font-weight:600;letter-spacing:2.4px;text-transform:uppercase;color:var(--ink);position:relative;`)}>{label}<span aria-hidden="true" className="nav-editorial-line"></span></button>
         ))}
       </div>
     </nav>
