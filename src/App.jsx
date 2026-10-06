@@ -3,8 +3,10 @@ import { AppContext, useApp } from './hooks/useApp';
 import { css } from './lib/css';
 import { pathFor } from './lib/routes';
 import Nav from './components/Nav';
+import NavEditorial from './components/NavEditorial';
 import MobileMenu from './components/MobileMenu';
 import Footer from './components/Footer';
+import Intro from './components/Intro';
 import Home from './pages/Home';
 import Work from './pages/Work';
 import About from './pages/About';
@@ -20,9 +22,11 @@ export default function App() {
     <AppContext.Provider value={app}>
       <div style={css("--cream:#F1EBE1;--paper:#FAF6EF;--ink:#2E2A24;--soft:#5B5247;--muted:#6F6151;--line:#DED1BF;--ph1:#E7DDCC;--ph2:#EEE6D7;background:var(--cream);color:var(--ink);font-family:'EB Garamond',Georgia,serif;min-height:100vh;")}>
 
+        <Intro />
+
         <a href="#main" className="skip-link">Skip to content</a>
 
-        <Nav />
+        {app.width > 680 ? <NavEditorial /> : <Nav />}
         <MobileMenu />
 
         <Routes location={location}>

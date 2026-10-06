@@ -1,6 +1,7 @@
 import { Fragment, useContext } from 'react';
 import { AppContext } from '../hooks/useApp';
 import { css } from '../lib/css';
+import { cloudinaryFromLocal } from '../lib/cloudinary';
 import { layoutFor } from '../lib/layout';
 
 export default function Pricing() {
@@ -18,14 +19,14 @@ export default function Pricing() {
         <div style={css(`display:grid;grid-template-columns:repeat(${pricingGridCols},1fr);gap:${pricingGridGap};padding:clamp(34px,4.5vw,46px) 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);`)}>
           <div style={css(`text-align: left`)}>
             <h3 style={css(`margin:0 0 14px;font-family:'Cormorant Garamond',serif;font-weight:500;font-size:clamp(22px,2.4vw,28px);color:var(--ink);`)}>Families</h3>
-            <div style={css(`border-radius:2px;overflow:hidden;background:var(--paper);aspect-ratio:4 / 5;margin:0 0 20px;`)}><img src="images/families/madison-tanya-hunter/Madison_Tanya_Hunter_2025-08_381.jpg" alt="Madison + Tanya – Family Session" loading="lazy" style={css(`display:block;width:100%;height:100%;object-fit:cover;`)} /></div>
+            <div style={css(`border-radius:2px;overflow:hidden;background:var(--paper);aspect-ratio:4 / 5;margin:0 0 20px;`)}><img src={cloudinaryFromLocal('/images/families/madison-tanya-hunter/Madison_Tanya_Hunter_2025-08_381.jpg', 900)} alt="Madison + Tanya – Family Session" loading="lazy" style={css(`display:block;width:100%;height:100%;object-fit:cover;`)} /></div>
             <p style={css(`margin:0;font-family:'Cormorant Garamond',serif;font-weight:500;font-size:clamp(20px,2.4vw,24px);color:var(--muted);`)}>$750</p>
             <p style={css(`margin:14px 0 0;font-size:17px;line-height:1.6;color:var(--soft);`)}>Includes newborns.</p>
             <p style={css(`margin:4px 0 0;font-size:17px;line-height:1.6;color:var(--soft);`)}>1 to 1.5 hours, anywhere in San Diego County.</p>
           </div>
           <div style={css(`text-align: left`)}>
             <h3 style={css(`margin:0 0 14px;font-family:'Cormorant Garamond',serif;font-weight:500;font-size:clamp(22px,2.4vw,28px);color:var(--ink);`)}>Maternity</h3>
-            <div style={css(`border-radius:2px;overflow:hidden;background:var(--paper);aspect-ratio:4 / 5;margin:0 0 20px;`)}><img src="images/maternity/angelica-eric/AANDE-Maternity51.jpg" alt="Maternity session on the beach" loading="lazy" style={css(`display:block;width:100%;height:100%;object-fit:cover;`)} /></div>
+            <div style={css(`border-radius:2px;overflow:hidden;background:var(--paper);aspect-ratio:4 / 5;margin:0 0 20px;`)}><img src={cloudinaryFromLocal('/images/maternity/angelica-eric/AANDE-Maternity51.jpg', 900)} alt="Maternity session on the beach" loading="lazy" style={css(`display:block;width:100%;height:100%;object-fit:cover;`)} /></div>
             <p style={css(`margin:0;font-family:'Cormorant Garamond',serif;font-weight:500;font-size:clamp(20px,2.4vw,24px);color:var(--muted);`)}>$650</p>
             <p style={css(`margin:14px 0 0;font-size:17px;line-height:1.6;color:var(--soft);`)}>Maternity sessions.</p>
             <p style={css(`margin:4px 0 0;font-size:17px;line-height:1.6;color:var(--soft);`)}>1 to 1.5 hours, anywhere in San Diego County.</p>
@@ -33,7 +34,7 @@ export default function Pricing() {
           </div>
           <div style={css(`text-align: left`)}>
             <h3 style={css(`margin:0 0 14px;font-family:'Cormorant Garamond',serif;font-weight:500;font-size:clamp(22px,2.4vw,28px);color:var(--ink);`)}>Couples &amp; Individuals</h3>
-            <div style={css(`border-radius:2px;overflow:hidden;background:var(--paper);aspect-ratio:4 / 5;margin:0 0 20px;`)}><img src="images/featured/NandiniANDSrikanth102.jpg" alt="Couple portrait session" loading="lazy" style={css(`display:block;width:100%;height:100%;object-fit:cover;`)} /></div>
+            <div style={css(`border-radius:2px;overflow:hidden;background:var(--paper);aspect-ratio:4 / 5;margin:0 0 20px;`)}><img src={cloudinaryFromLocal('/images/portraits/nandini-srikanth/NandiniANDSrikanth102.jpg', 900)} alt="Couple portrait session" loading="lazy" style={css(`display:block;width:100%;height:100%;object-fit:cover;`)} /></div>
             <p style={css(`margin:0;font-family:'Cormorant Garamond',serif;font-weight:500;font-size:clamp(20px,2.4vw,24px);color:var(--muted);`)}>$650</p>
             <p style={css(`margin:14px 0 0;font-size:17px;line-height:1.6;color:var(--soft);`)}>Individuals, couples, engagements, proposals.</p>
             <p style={css(`margin:4px 0 0;font-size:17px;line-height:1.6;color:var(--soft);`)}>1 to 1.5 hours, anywhere in San Diego County.</p>

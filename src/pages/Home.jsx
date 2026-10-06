@@ -4,6 +4,8 @@ import { css } from '../lib/css';
 import { heroSlides, testimonialsData, teaserPhotos } from '../data/content';
 import { layoutFor } from '../lib/layout';
 import { packPhotos } from '../lib/packPhotos';
+import HeroEditorial from '../components/HeroEditorial';
+import IntroSection from '../components/IntroSection';
 import { sessionPhotoTile, skeletonTile } from '../components/PhotoTiles';
 
 export default function Home() {
@@ -12,7 +14,8 @@ export default function Home() {
     activeTestimonialIndex, testimonialFading, selectTestimonial, orientationCache,
   } = useContext(AppContext);
   const { teaserGridCols, photoGap, teaserSectionStyle } = layoutFor(width);
-  const navWork = () => go('work'), navInvest = () => go('pricing'), navContact = () => go('contact');
+  const isDesktop = width > 680;
+  const navInvest = () => go('pricing'), navContact = () => go('contact');
 
   const heroDots = heroSlides.map((s, i) => (
     <button
@@ -75,6 +78,9 @@ export default function Home() {
 
   return (
     <main id="main">
+      {isDesktop ? (
+      <HeroEditorial />
+      ) : (
       <section onTouchStart={heroTouchStart} onTouchEnd={heroTouchEnd} aria-roledescription="carousel" style={css(`position:relative;height:min(calc(100dvh - 67px),128vw);min-height:430px;overflow:hidden;background:var(--paper);touch-action:pan-y;`)}>
         {heroLayers}
         <div style={css(`position:absolute;inset:0;background:linear-gradient(to bottom,rgba(40,32,24,0) 55%,rgba(40,32,24,0.32) 100%);`)}></div>
@@ -94,14 +100,9 @@ export default function Home() {
           <div style={css(`display:flex;gap:0;`)}>{heroDots}</div>
         </div>
       </section>
+      )}
 
-      <section style={css(`max-width:720px;margin:0 auto;padding:clamp(80px,11vw,128px) 32px;text-align:center;`)}>
-        <p style={css(`margin:0;font-size:20px;line-height:1.66;color:var(--soft);`)}>Hi! I'm Hannah – a San Diego photographer with 10+ years of experience, working with couples, individuals, engaged and newly-engaged couples, expecting parents, families, and newborns. I shoot in a style that's natural, candid, and editorial – warm and real.</p>
-        <p style={css(`margin:28px 0 0;font-size:20px;line-height:1.66;color:var(--soft);`)}>I photograph throughout San Diego County (travel inquiries outside San Diego County are always welcome), wherever the light is good and the moment is honest – backyards, living rooms, the coast, golden late-afternoon light. The goal is always the same: images that feel like you, not like a photoshoot.</p>
-        <p style={css(`margin:28px 0 0;font-size:20px;line-height:1.66;color:var(--soft);`)}><strong>The real story, not the posed one.</strong></p>
-        <p style={css(`margin:16px 0 0;font-size:20px;line-height:1.66;color:var(--soft);`)}>It's what I look for in every session – not the moments you'd plan for, but the ones that happen when you forget I'm there. After 10+ years doing this, I know exactly how to find them.</p>
-        <div style={css(`margin-top:42px;`)}><button onClick={navWork} style={css(`background:none;border:none;border-bottom:1px solid var(--muted);cursor:pointer;padding:0 0 6px;font-family:'Mulish',sans-serif;font-size:12px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--ink);`)}>See the Work&nbsp;→</button></div>
-      </section>
+      <IntroSection />
 
       <section style={teaserSectionStyle}>
         <div style={css(`max-width:1180px;margin:0 auto;display:grid;grid-template-columns:repeat(${teaserGridCols},1fr);grid-auto-flow:dense;gap:${photoGap};`)}>{teaserTiles}</div>

@@ -1,25 +1,26 @@
+import { cloudinaryFromLocal, cloudinaryUrl } from '../lib/cloudinary';
 export const teaserPhotos = [
-  '/images/featured/baby-ollie40.jpg',
-  '/images/featured/emma-senior-photos147.jpg',
-  '/images/featured/NandiniANDSrikanth87.jpg',
-  '/images/featured/McClintock2026-94.jpg',
-  '/images/featured/GR9A0330-Edit-Compressed.jpg',
-  '/images/featured/HeidiANDAndre14.jpg',
-  '/images/featured/mANDt-family-session19.jpg',
-  '/images/featured/Madison_Tanya_Hunter_2025-08_381.jpg',
-  '/images/featured/NandiniANDSrikanth102.jpg',
-  '/images/featured/GR9A0188-Edit-Compressed.jpg',
-  '/images/featured/Weidner-Family213.jpg',
-  '/images/featured/SarahANDReid-Family2023-18.jpg',
-  '/images/featured/AANDE-Maternity57.jpg',
+  cloudinaryUrl('galleries/families/baby-ollie/baby-ollie40', 1000),
+  cloudinaryUrl('galleries/portraits/emma-senior-photos/emma-senior-photos147', 1000),
+  cloudinaryUrl('galleries/portraits/nandini-srikanth/NandiniANDSrikanth87', 1000),
+  cloudinaryUrl('galleries/maternity/mana-chris/McClintock2026-94', 1000),
+  cloudinaryFromLocal('/images/featured/GR9A0330-Edit-Compressed.jpg', 1000),
+  cloudinaryUrl('galleries/portraits/heidi-andre/HeidiANDAndre14', 1000),
+  cloudinaryUrl('galleries/families/maguy-trae-ivy/mANDt-family-session19', 1000),
+  cloudinaryUrl('galleries/families/madison-tanya-hunter/Madison_Tanya_Hunter_2025-08_381', 1000),
+  cloudinaryUrl('galleries/portraits/nandini-srikanth/NandiniANDSrikanth102', 1000),
+  cloudinaryFromLocal('/images/featured/GR9A0188-Edit-Compressed.jpg', 1000),
+  cloudinaryUrl('galleries/families/weidner-family/Weidner-Family213', 1000),
+  cloudinaryUrl('galleries/families/bleil-family/SarahANDReid-Family2023-18', 1000),
+  cloudinaryUrl('galleries/maternity/angelica-eric/AANDE-Maternity57', 1000),
 ];
 
 export const heroSlides = [
-  { src: '/images/hero/HeidiANDAndre161.jpg', pos: 'center 40%' },
-  { src: '/images/hero/JessANDCalen-proposal23.jpg', pos: 'center 45%' },
-  { src: '/images/hero/NandiniANDSrikanth102.jpg', pos: 'center 50%' },
-  { src: '/images/hero/NandiniANDSrikanth50.jpg', pos: 'center 50%' },
-  { src: '/images/hero/Madison_Tanya_Hunter_2025-08_432.jpg', pos: 'center 45%' },
+  { src: cloudinaryUrl('galleries/portraits/heidi-andre/HeidiANDAndre161', 2200), pos: 'center 40%' },
+  { src: cloudinaryUrl('galleries/portraits/jess-calen/JessANDCalen-proposal23', 2200), pos: 'center 45%' },
+  { src: cloudinaryUrl('galleries/portraits/nandini-srikanth/NandiniANDSrikanth102', 2200), pos: 'center 50%' },
+  { src: cloudinaryUrl('galleries/portraits/nandini-srikanth/NandiniANDSrikanth50', 2200), pos: 'center 50%' },
+  { src: cloudinaryUrl('galleries/families/madison-tanya-hunter/Madison_Tanya_Hunter_2025-08_432', 2200), pos: 'center 45%' },
 ];
 
 export const testimonialsData = [

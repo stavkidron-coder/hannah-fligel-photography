@@ -1,6 +1,7 @@
 import { Fragment, useContext } from 'react';
 import { AppContext } from '../hooks/useApp';
 import { css } from '../lib/css';
+import { cloudinaryFromLocal } from '../lib/cloudinary';
 
 export default function About() {
   const { go } = useContext(AppContext);
@@ -9,7 +10,7 @@ export default function About() {
     <main id="main">
       <div style={css(`max-width:680px;margin:0 auto;padding:clamp(48px,7vw,72px) 32px 0;`)}>
         <div style={css(`position:relative;width:100%;aspect-ratio:1/1;overflow:hidden;background:var(--paper);`)}>
-          <img src="images/About/hannah-portrait.jpg" alt="Portrait of Hannah Fligel" style={css(`width: 100%; height: 100%; object-fit: cover; border-radius: 3px`)} />
+          <img src={cloudinaryFromLocal('/images/About/hannah-portrait.jpg', 1400)} alt="Portrait of Hannah Fligel" style={css(`width: 100%; height: 100%; object-fit: cover; border-radius: 3px`)} />
         </div>
       </div>
       <div style={css(`max-width:680px;margin:0 auto;padding:clamp(40px,6vw,56px) 32px clamp(80px,11vw,128px);`)}>

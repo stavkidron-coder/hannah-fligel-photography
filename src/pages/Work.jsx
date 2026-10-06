@@ -5,6 +5,7 @@ import { layoutFor } from '../lib/layout';
 import { packPhotos } from '../lib/packPhotos';
 import { allSessions, catLabels, catNotes, savedOrder, sessionQuotes } from '../data/sessions';
 import { batchSize } from '../config';
+import { cloudinarySrcSet, COVER_WIDTHS, COVER_SIZES_GRID, COVER_SIZES_MORE } from '../lib/cloudinary';
 import { sessionPhotoTile, skeletonTile } from '../components/PhotoTiles';
 
 const reorder = (list, orderIds) => {
@@ -124,7 +125,7 @@ export default function Work() {
               <div style={css(`display:grid;grid-template-columns:repeat(${moreSessionsCols},1fr);gap:clamp(20px,3vw,30px);`)}>
                 {moreSessions.map((m, idx) => (<Fragment key={idx}>
                   <button onClick={m.open} type="button" style={css(`display:flex;flex-direction:column;gap:13px;background:none;border:none;cursor:pointer;padding:0;text-align:left;font:inherit;color:inherit;`)}>
-                    <div style={css(`border-radius:2px;overflow:hidden;background:var(--paper);aspect-ratio:4 / 5;`)}><img src={m.cover} alt={m.alt} loading="lazy" style={css(`display:block;width:100%;height:100%;object-fit:cover;`)} /></div>
+                    <div style={css(`border-radius:2px;overflow:hidden;background:var(--paper);aspect-ratio:4 / 5;`)}><img src={m.cover} srcSet={cloudinarySrcSet(m.cover, COVER_WIDTHS)} sizes={cloudinarySrcSet(m.cover, COVER_WIDTHS) ? COVER_SIZES_MORE : undefined} alt={m.alt} loading="lazy" style={css(`display:block;width:100%;height:100%;object-fit:cover;`)} /></div>
                     <div>
                       <p style={css(`margin:0;font-family:'Cormorant Garamond',serif;font-weight:500;font-size:18px;line-height:1.3;color:var(--ink);`)}>{m.title}</p>
                       <p style={css(`margin:4px 0 0;font-family:'Mulish',sans-serif;font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);`)}>{m.catLabel}</p>
@@ -151,7 +152,7 @@ export default function Work() {
         <div ref={gridRef} style={css(`display:grid;grid-template-columns:repeat(${galleryCols},1fr);gap:clamp(24px,3vw,36px);`)}>
           {shownSessions.map((s, idx) => (<Fragment key={idx}>
             <button onClick={s.open} type="button" style={css(`display:flex;flex-direction:column;gap:14px;background:none;border:none;cursor:pointer;padding:0;text-align:left;font:inherit;color:inherit;animation:cardFadeIn .5s ease both;animation-delay:${s.delayMs}ms;`)}>
-              <div style={css(`border-radius:2px;overflow:hidden;background:var(--paper);aspect-ratio:4 / 5;`)}><img src={s.cover} alt={s.alt} loading="lazy" style={css(`display:block;width:100%;height:100%;object-fit:cover;`)} /></div>
+              <div style={css(`border-radius:2px;overflow:hidden;background:var(--paper);aspect-ratio:4 / 5;`)}><img src={s.cover} srcSet={cloudinarySrcSet(s.cover, COVER_WIDTHS)} sizes={cloudinarySrcSet(s.cover, COVER_WIDTHS) ? COVER_SIZES_GRID : undefined} alt={s.alt} loading="lazy" style={css(`display:block;width:100%;height:100%;object-fit:cover;`)} /></div>
               <div>
                 <p style={css(`margin:0;font-family:'Cormorant Garamond',serif;font-weight:500;font-size:19px;line-height:1.3;color:var(--ink);`)}>{s.title}</p>
                 <p style={css(`margin:4px 0 0;font-family:'Mulish',sans-serif;font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);`)}>{s.catLabel}</p>

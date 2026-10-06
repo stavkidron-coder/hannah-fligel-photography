@@ -5,6 +5,7 @@ import { allSessions } from '../data/sessions';
 import { heroIntervalSec, batchSize } from '../config';
 import { hashFor, parseHash, setTitle } from '../lib/routes';
 import { useContactForm } from './useContactForm';
+import { cloudinaryResize } from '../lib/cloudinary';
 
 export const AppContext = createContext(null);
 
@@ -59,7 +60,7 @@ export function useApp() {
       const img = new Image();
       img.onload = () => { cache[src] = img.naturalWidth > img.naturalHeight; done(); };
       img.onerror = () => { cache[src] = false; done(); };
-      img.src = encodeURI(src);
+      img.src = encodeURI(cloudinaryResize(src, 80)); // tiny copy for Cloudinary photos: only the aspect ratio is needed
     });
   }, []);
 

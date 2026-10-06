@@ -10,3 +10,33 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 .skip-link:focus{left:12px;top:12px;background:#2E2A24;color:#FBF8F2;padding:12px 18px;border-radius:8px;font-family:'Mulish',sans-serif;font-size:13px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;}
 @keyframes cardFadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
 @keyframes skeletonPulse{0%,100%{background-color:var(--ph1);}50%{background-color:var(--ph2);}}
+
+.hero-editorial-row { scrollbar-width: none; }
+.hero-editorial-row::-webkit-scrollbar { display: none; }
+
+/* Editorial nav: the underline fills in from the left on hover/focus and drains out to the right. The current page stays filled. */
+.nav-editorial-line { position: absolute; left: 0; right: 0; bottom: -3px; height: 1px; background: var(--ink); transform: scaleX(0); transform-origin: right center; transition: transform .45s cubic-bezier(.65,0,.35,1); }
+.nav-editorial-link:hover .nav-editorial-line,
+.nav-editorial-link:focus-visible .nav-editorial-line,
+.nav-editorial-link[aria-current="page"] .nav-editorial-line { transform: scaleX(1); transform-origin: left center; }
+
+/* Editorial hero hover: the hovered photo stays bright, the others dim. */
+/* Same as the nav links, minus the uppercase. Light until its photo is hovered. */
+.hero-ed-label { letter-spacing: 2.4px; color: rgba(46,42,36,.7); transition: color .4s ease; }
+.hero-ed-item[data-active] .hero-ed-label, .hero-ed-item:focus-visible .hero-ed-label { color: var(--ink); }
+.hero-ed-dim { position: absolute; inset: 0; background: #000; opacity: 0; pointer-events: none; transition: opacity .4s ease; }
+.hero-ed-item:focus-visible { outline: none; }
+/* On load the photos fade in left to right. Backwards fill only: once it ends, the scroll-driven inline opacity takes over for the fade-out. */
+@keyframes heroEdIn { from { opacity: 0; } to { opacity: 1; } }
+.hero-ed-item { animation: heroEdIn 1.4s ease-out calc(.2s + var(--i, 0) * .28s) backwards; }
+/* While the intro cover is up, hold the photos at their start state; removing data-intro lets the fade-in begin. */
+html[data-intro] .hero-ed-item { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) { .hero-ed-item { animation: none; } }
+@media (hover: hover) {
+  /* data-active is set by the hero's script from the pointer position, so it keeps up while the row scrolls under a still mouse. */
+  .hero-editorial-row[data-active] .hero-ed-item:not([data-active]) .hero-ed-dim { opacity: .5; }
+}
+.hero-editorial-row:has(.hero-ed-item:focus-visible) .hero-ed-item:not(:focus-visible) .hero-ed-dim { opacity: .5; }
+
+/* Stop at the top/bottom instead of rubber-banding. */
+html, body { overscroll-behavior-y: none; }
