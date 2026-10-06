@@ -2,17 +2,18 @@ import { useContext, useLayoutEffect, useRef } from 'react';
 import { AppContext } from '../hooks/useApp';
 import { css } from '../lib/css';
 import { NAV_EDITORIAL_H } from './NavEditorial';
+import { cloudinaryFromLocal } from '../lib/cloudinary';
 import { smoothY, subscribeSmoothScroll } from '../lib/smoothScroll';
 
 // Each photo opens Work pre-filtered; the Work page only has Families / Maternity / Couples tabs, so portraits and engagements land on Couples.
 // Figma "Hero Images": a row of category photos with small labels above each.
 const LABEL_H = 18; // 15px label + 3px gap
 const slides = [
-  { label: 'portraits', cat: 'couples', src: '/images/portraits/emma-senior-photos/emma-senior-photos147.jpg', ratio: '1067 / 1600' },
-  { label: 'families', cat: 'families', src: '/images/families/madison-tanya-hunter/Madison_Tanya_Hunter_2025-08_381.jpg', ratio: '1067 / 1600' },
-  { label: 'couples', cat: 'couples', src: '/images/hero/HeidiANDAndre161.jpg', ratio: '1600 / 1067' },
-  { label: 'maternity', cat: 'maternity', src: '/images/maternity/angelica-eric/AANDE-Maternity176.jpg', ratio: '1067 / 1600' },
-  { label: 'engagements', cat: 'couples', src: '/images/portraits/nandini-srikanth/NandiniANDSrikanth259.jpg', ratio: '1067 / 1600' },
+  { label: 'portraits', cat: 'couples', src: cloudinaryFromLocal('/images/portraits/emma-senior-photos/emma-senior-photos147.jpg', 1400), ratio: '1067 / 1600' },
+  { label: 'families', cat: 'families', src: cloudinaryFromLocal('/images/families/madison-tanya-hunter/Madison_Tanya_Hunter_2025-08_381.jpg', 1400), ratio: '1067 / 1600' },
+  { label: 'couples', cat: 'couples', src: cloudinaryFromLocal('/images/portraits/heidi-andre/HeidiANDAndre161.jpg', 1400), ratio: '1600 / 1067' },
+  { label: 'maternity', cat: 'maternity', src: cloudinaryFromLocal('/images/maternity/angelica-eric/AANDE-Maternity176.jpg', 1400), ratio: '1067 / 1600' },
+  { label: 'engagements', cat: 'couples', src: cloudinaryFromLocal('/images/portraits/nandini-srikanth/NandiniANDSrikanth259.jpg', 1400), ratio: '1067 / 1600' },
 ];
 
 // Scroll timeline (px of scroll after the hero pins): the row walks left until the last photo is flush right,
