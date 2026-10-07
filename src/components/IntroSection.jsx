@@ -1,14 +1,15 @@
 import { useContext, useLayoutEffect, useRef } from 'react';
 import { AppContext } from '../hooks/useApp';
 import { css } from '../lib/css';
+import { cloudinaryUrl } from '../lib/cloudinary';
 import { smoothY, subscribeSmoothScroll } from '../lib/smoothScroll';
 
-// Figma "Intro Section": copy blocks joined by thin elbow connectors round a boxed pull-quote.
+// Figma "Intro Section": copy blocks joined by thin elbow connectors round a photo-filled pull-quote.
 // The desktop layout is the Figma frame (1750 wide) scaled to fit the viewport and pinned while it builds up on scroll:
-// text 1 rises in, line 1 draws to text 2, which rises in, line 2 draws to the quote, line 3 draws to the last text.
+// text 1 rises in, line 1 draws to text 2, which rises in, line 2 draws to the quote, line 3 draws to the last text, line 4 drops from it toward the photo strip.
 // Below DESKTOP_MIN the blocks stack and each simply rises in as it scrolls into view.
 const STAGE_W = 1750;
-const CROP_TOP = 230, CROP_H = 650; // the frame has a lot of empty space above and below the content
+const CROP_TOP = 280, CROP_H = 860; // the frame has a lot of empty space above and below the content
 const DESKTOP_MIN = 1100;
 const LINE = '#BBA17C';
 
@@ -21,20 +22,21 @@ const RISE = 40;        // px (in Figma units) a block travels up as it fades in
 
 // Connectors in Figma coordinates, each running from the text it leaves to the text it reaches.
 const PATHS = [
-  [[549, 487], [874, 487], [874, 374], [942, 374]],
-  [[1404, 480], [1489, 480], [1489, 635], [1194, 635]],
-  [[555, 635], [347, 635], [347, 764], [504, 764]],
+  [[549, 472], [874, 472], [874, 374], [942, 374]],
+  [[1404, 480], [1489, 480], [1489, 660], [1342, 660]],
+  [[310, 820], [102, 820], [102, 977], [504, 977]],
+  [[875, 1035], [875, 1140]],
 ];
 const lengthOf = (pts) => pts.reduce((a, p, i) => (i ? a + Math.abs(p[0] - pts[i - 1][0]) + Math.abs(p[1] - pts[i - 1][1]) : 0), 0);
 const LENGTHS = PATHS.map(lengthOf);
 // Every line draws at the same speed, so the scroll each one takes is proportional to its length.
 const PX_VH = (PIN_VH - HOLD_VH - 4 * TEXT_VH) / LENGTHS.reduce((a, b) => a + b, 0);
-// Start/end of each step, in screen heights: text 1, line 1, text 2, line 2, quote, line 3, text 4.
+// Start/end of each step, in screen heights: text 1, line 1, text 2, line 2, quote, line 3, text 4, line 4.
 const STEPS = (() => {
   const out = [];
   let t = 0;
   const add = (d) => { out.push([t, t + d]); t += d; };
-  add(TEXT_VH); add(LENGTHS[0] * PX_VH); add(TEXT_VH); add(LENGTHS[1] * PX_VH); add(TEXT_VH); add(LENGTHS[2] * PX_VH); add(TEXT_VH);
+  add(TEXT_VH); add(LENGTHS[0] * PX_VH); add(TEXT_VH); add(LENGTHS[1] * PX_VH); add(TEXT_VH); add(LENGTHS[2] * PX_VH); add(TEXT_VH); add(LENGTHS[3] * PX_VH);
   return out;
 })();
 
@@ -48,7 +50,11 @@ const heading = `font-weight:400;font-size:48px;line-height:1.1;color:var(--ink)
 const copy1 = `I’m a San Diego photographer with 10+ years of experience, working with couples, individuals, engaged and newly-engaged couples, expecting parents, families, and newborns. I shoot in a style that's natural, candid, and editorial – warm and real.`;
 const copy2 = (<>I photograph throughout San Diego County (travel inquiries outside San Diego County are always welcome), wherever the light is good and the moment is honest (backyards, living rooms, the coast, golden late-afternoon light). The goal is always the same: images that feel like <strong style={{ fontStyle: 'italic', fontWeight: 700 }}>you</strong>, not like a photoshoot.</>);
 const copy3 = (<>It's what I look for in every session. Not the moments you'd plan for, but the ones that happen when you forget I'm there. After 10+ years doing this, <em>I know exactly how to find them</em>.</>);
-const quote = 'The real story, not the posed one';
+const quoteLines = ['The real story,', 'not the posed one'];
+// The quote is knocked out of a photo: text filled with the image, with a soft glow (drop-shadow, since text-shadow would show through the clear fill).
+const QUOTE_PHOTO = cloudinaryUrl('galleries/portraits/dana-josh/DanaANDJosh163', 1400);
+const quoteStyle = `font-family:'Mulish',sans-serif;font-weight:800;margin:0;text-align:center;color:transparent;-webkit-text-fill-color:transparent;background-image:url("${QUOTE_PHOTO}");background-size:cover;background-position:center;-webkit-background-clip:text;background-clip:text;filter:drop-shadow(0 0 20px rgba(187,161,124,0.25));`;
+const quoteEl = quoteLines.map((l, i) => <span key={i} style={{ display: 'block' }}>{l}</span>);
 
 // Stacked layout: each block fades up once, the first time it is partly on screen.
 function useRiseOnView(ref, active) {
@@ -91,7 +97,7 @@ export default function IntroSection() {
         el.style.translate = `0 ${(1 - p) * RISE}px`;
       });
       // lines are steps 1, 3, 5; drawn linearly with scroll so the pen moves at a steady speed
-      [1, 3, 5].forEach((step, k) => {
+      [1, 3, 5, 7].forEach((step, k) => {
         const p = reduced ? 1 : clamp01((sv - STEPS[step][0]) / (STEPS[step][1] - STEPS[step][0]));
         lines.current[k].style.strokeDashoffset = String(1 - p);
       });
@@ -113,7 +119,7 @@ export default function IntroSection() {
             <p style={css(body)}>{copy1}</p>
           </div>
           <p style={css(body)}>{copy2}</p>
-          <p style={css(`${heading}font-size:clamp(26px,5.6vw,36px);line-height:1.2;text-align:center;background:var(--paper);border:2px solid var(--muted);border-radius:12px;padding:14px 20px;box-shadow:0 0 15px #fff;`)}>{quote}</p>
+          <p style={css(`${quoteStyle}font-size:min(7.6vw,48px);white-space:nowrap;line-height:1.1;padding:8px 0;`)}>{quoteEl}</p>
           <p style={css(`${body}text-align:center;`)}>{copy3}</p>
         </div>
       </section>
@@ -143,9 +149,9 @@ export default function IntroSection() {
 
             <p ref={(el) => { blocks.current[1] = el; }} style={css(`${body}${hidden}position:absolute;left:960px;top:${359 - CROP_TOP}px;width:627px;`)}>{copy2}</p>
 
-            <p ref={(el) => { blocks.current[2] = el; }} style={css(`${heading}${hidden}position:absolute;left:50%;top:${591 - CROP_TOP}px;transform:translateX(-50%);white-space:nowrap;background:#FBF8F2;border:2px solid #6F6151;border-radius:12px;padding:10px 20px;line-height:normal;box-shadow:0 0 15px #fff;`)}>{quote}</p>
+            <p ref={(el) => { blocks.current[2] = el; }} style={css(`${quoteStyle}${hidden}position:absolute;left:50%;top:${564 - CROP_TOP}px;transform:translateX(-50%);white-space:nowrap;font-size:128px;line-height:normal;`)}>{quoteEl}</p>
 
-            <p ref={(el) => { blocks.current[3] = el; }} style={css(`${body}${hidden}position:absolute;left:50%;top:${746 - CROP_TOP}px;width:740px;transform:translateX(-50%);text-align:center;`)}>{copy3}</p>
+            <p ref={(el) => { blocks.current[3] = el; }} style={css(`${body}${hidden}position:absolute;left:50%;top:${958 - CROP_TOP}px;width:740px;transform:translateX(-50%);text-align:center;`)}>{copy3}</p>
           </div>
         </div>
       </div>

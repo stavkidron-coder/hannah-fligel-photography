@@ -1,19 +1,14 @@
-import { Fragment, useContext } from 'react';
+import { useContext } from 'react';
 import { AppContext } from '../hooks/useApp';
 import { css } from '../lib/css';
 import { heroSlides, testimonialsData, teaserPhotos } from '../data/content';
-import { layoutFor } from '../lib/layout';
-import { packPhotos } from '../lib/packPhotos';
 import HeroEditorial from '../components/HeroEditorial';
 import IntroSection from '../components/IntroSection';
-import { sessionPhotoTile, skeletonTile } from '../components/PhotoTiles';
 
 export default function Home() {
   const {
     width, go, activeHero, heroPaused, heroQuick, goToHero, toggleHero, heroTouchStart, heroTouchEnd,
-    activeTestimonialIndex, testimonialFading, selectTestimonial, orientationCache,
   } = useContext(AppContext);
-  const { teaserGridCols, photoGap, teaserSectionStyle } = layoutFor(width);
   const isDesktop = width > 680;
   const navInvest = () => go('pricing'), navContact = () => go('contact');
 
@@ -54,27 +49,8 @@ export default function Home() {
   const heroToggleLabel = heroPaused ? 'Play slideshow' : 'Pause slideshow';
   const heroPlaying = !heroPaused;
 
-  const teaserAllKnown = teaserPhotos.every((src) => src in orientationCache);
-  const teaserTiles = teaserAllKnown
-    ? packPhotos(teaserPhotos, teaserGridCols, orientationCache).map((p, i) => sessionPhotoTile(p.src, p.span, i, 'Featured client photography'))
-    : teaserPhotos.map((src, i) => skeletonTile(`sk-${i}`));
-
-  const activeTestimonial = testimonialsData[activeTestimonialIndex];
-  const testimonialOpacity = testimonialFading ? 0 : 1;
-  const testimonials = testimonialsData.map((t, i) => ({
-    select: () => selectTestimonial(i),
-    label: 'Show testimonial ' + (i + 1) + ' of ' + testimonialsData.length,
-    current: i === activeTestimonialIndex ? 'true' : 'false',
-    dotStyle: {
-      display: 'block',
-      width: i === activeTestimonialIndex ? 10 : 8,
-      height: i === activeTestimonialIndex ? 10 : 8,
-      borderRadius: '50%',
-      border: '1px solid var(--muted)',
-      background: i === activeTestimonialIndex ? 'var(--ink)' : 'transparent',
-      transition: 'background .4s ease-in-out',
-    },
-  }));
+  const stripPhotos = teaserPhotos.slice(0, 7); // Figma: the first four are landscape-ish 494x656 tiles, the rest 378x568
+  const testimonial = testimonialsData[0];
 
   return (
     <main id="main">
@@ -104,34 +80,21 @@ export default function Home() {
 
       <IntroSection />
 
-      <section style={teaserSectionStyle}>
-        <div style={css(`max-width:1180px;margin:0 auto;display:grid;grid-template-columns:repeat(${teaserGridCols},1fr);grid-auto-flow:dense;gap:${photoGap};`)}>{teaserTiles}</div>
+      <section aria-label="Featured client photography" className="home-strip" style={css(`display:flex;gap:12px;align-items:center;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none;`)}>
+        {stripPhotos.map((src, i) => (
+          <img key={src} src={src} alt="Featured client photography" loading="lazy" draggable="false" style={css(`flex:none;height:clamp(340px,46vw,656px);aspect-ratio:${i < 4 ? '494 / 656' : '378 / 568'};object-fit:cover;border-radius:16px;display:block;`)} />
+        ))}
       </section>
 
-      <section style={css(`padding:clamp(64px,9vw,104px) 32px;text-align:center;`)}>
-        <p style={css(`margin:0;font-style:italic;font-size:clamp(19px,2.2vw,23px);color:var(--soft);`)}>Curious about working together?</p>
-        <div style={css(`margin-top:20px;`)}>
-          <button onClick={navInvest} style={css(`background:none;border:none;border-bottom:1px solid var(--muted);cursor:pointer;padding:0 0 3px;font-family:'Mulish',sans-serif;font-size:12px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--ink);vertical-align:middle;`)}>View Pricing&nbsp;→</button>
+      <section style={css(`display:flex;flex-wrap:wrap;gap:40px 64px;align-items:center;justify-content:space-between;padding:60px clamp(24px,5.8vw,102px);`)}>
+        <div style={css(`flex:1 1 420px;max-width:683px;display:flex;flex-direction:column;gap:32px;`)}>
+          <p style={css(`margin:0;font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,2.6vw,30px);line-height:1.32;color:var(--ink);`)}>{testimonial.quote}</p>
+          <p style={css(`margin:0;font-family:'Mulish',sans-serif;font-size:12px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);`)}>{testimonial.author}</p>
         </div>
-      </section>
-
-      <section style={css(`background: var(--paper)`)}>
-        <div style={css(`max-width:760px;margin:0 auto;padding:clamp(80px,11vw,128px) 32px;text-align:center;`)}>
-          <div style={css(`min-height:clamp(170px,20vw,210px);display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:${testimonialOpacity};transition:opacity .4s ease-in-out;`)}>
-            <p style={css(`margin:0;font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,2.6vw,30px);line-height:1.32;color:var(--ink);`)}>{activeTestimonial.quote}</p>
-            <p style={css(`margin:30px 0 0;font-family:'Mulish',sans-serif;font-size:12px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);`)}>{activeTestimonial.author}</p>
-          </div>
-          <div style={css(`display:flex;justify-content:center;gap:2px;margin-top:clamp(30px,4vw,40px);`)}>
-            {testimonials.map((t, idx) => (<Fragment key={idx}>
-              <button onClick={t.select} aria-label={t.label} aria-current={t.current} style={css(`background:none;border:none;cursor:pointer;padding:0;width:44px;height:44px;display:flex;align-items:center;justify-content:center;`)}><span style={t.dotStyle}></span></button>
-            </Fragment>))}
-          </div>
+        <div style={css(`display:flex;flex-direction:column;gap:12px;align-items:flex-start;`)}>
+          <p style={css(`margin:0;font-style:italic;font-size:clamp(19px,2.2vw,23px);color:var(--soft);`)}>Curious about working together?</p>
+          <button onClick={navInvest} style={css(`background:none;border:none;border-bottom:1px solid var(--muted);cursor:pointer;padding:0 0 3px;font-family:'Mulish',sans-serif;font-size:12px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--ink);`)}>View Pricing&nbsp;→</button>
         </div>
-      </section>
-
-      <section style={css(`text-align:center;padding:clamp(90px,12vw,140px) 32px;`)}>
-        <p style={css(`margin:0;font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(30px,4.6vw,54px);line-height:1.15;color:var(--ink);`)}>Let's make something worth keeping.</p>
-        <div style={css(`margin-top:36px;`)}><button onClick={navContact} style={css(`background: var(--ink); color: #FAF6EF; border: none; border-radius: 9px; cursor: pointer; padding: 17px 34px; font-family: 'Mulish',sans-serif; font-size: 12px; font-weight: 600; letter-spacing: .2em; text-transform: uppercase`)}>Get in Touch</button></div>
       </section>
     </main>
   );
