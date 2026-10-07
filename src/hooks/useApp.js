@@ -185,19 +185,21 @@ export function useApp() {
   };
 
   /* ---------- testimonials ---------- */
+  // Slow crossfade: fades out over FADE_MS, swaps, fades back in; each quote then rests for the rest of HOLD_MS.
+  const TESTIMONIAL_FADE_MS = 1400, TESTIMONIAL_HOLD_MS = 9000;
   const advanceTestimonial = (toIndex) => {
     setTestimonialFading(true);
     clearTimeout(testimonialFade.current);
     testimonialFade.current = setTimeout(() => {
       setActiveTestimonial((a) => toIndex ?? (a + 1) % testimonialsData.length);
       setTestimonialFading(false);
-    }, 400);
+    }, TESTIMONIAL_FADE_MS);
   };
   const selectTestimonial = (i) => {
     advanceTestimonial(i);
     if (testimonialTimer.current) {
       clearInterval(testimonialTimer.current);
-      testimonialTimer.current = setInterval(() => advanceTestimonial(), 6000);
+      testimonialTimer.current = setInterval(() => advanceTestimonial(), TESTIMONIAL_HOLD_MS);
     }
   };
 
@@ -227,7 +229,7 @@ export function useApp() {
     window.addEventListener('resize', onResize);
     ensureOrientations(teaserPhotos);
     if (!reducedMotion.current) {
-      testimonialTimer.current = setInterval(() => advanceTestimonial(), 6000);
+      testimonialTimer.current = setInterval(() => advanceTestimonial(), TESTIMONIAL_HOLD_MS);
     }
     return () => {
       clearInterval(heroTimer.current);

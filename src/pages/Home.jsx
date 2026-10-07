@@ -9,6 +9,7 @@ import FeaturedMarquee from '../components/FeaturedMarquee';
 export default function Home() {
   const {
     width, go, activeHero, heroPaused, heroQuick, goToHero, toggleHero, heroTouchStart, heroTouchEnd,
+    activeTestimonialIndex, testimonialFading,
   } = useContext(AppContext);
   const isDesktop = width > 680;
   const navInvest = () => go('pricing'), navContact = () => go('contact');
@@ -50,7 +51,7 @@ export default function Home() {
   const heroToggleLabel = heroPaused ? 'Play slideshow' : 'Pause slideshow';
   const heroPlaying = !heroPaused;
 
-  const testimonial = testimonialsData[0];
+  const testimonial = testimonialsData[activeTestimonialIndex];
 
   return (
     <main id="main">
@@ -83,7 +84,7 @@ export default function Home() {
       <FeaturedMarquee />
 
       <section style={css(`display:flex;flex-wrap:wrap;gap:40px 64px;align-items:center;justify-content:space-between;padding:60px clamp(24px,5.8vw,102px);`)}>
-        <div style={css(`flex:1 1 420px;max-width:683px;display:flex;flex-direction:column;gap:32px;`)}>
+        <div style={css(`flex:1 1 420px;max-width:683px;display:flex;flex-direction:column;gap:32px;min-height:clamp(170px,14vw,190px);justify-content:center;opacity:${testimonialFading ? 0 : 1};transition:opacity 1.4s ease-in-out;`)}>
           <p style={css(`margin:0;font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,2.6vw,30px);line-height:1.32;color:var(--ink);`)}>{testimonial.quote}</p>
           <p style={css(`margin:0;font-family:'Mulish',sans-serif;font-size:12px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);`)}>{testimonial.author}</p>
         </div>
