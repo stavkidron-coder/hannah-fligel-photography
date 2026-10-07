@@ -1,9 +1,10 @@
 import { useContext } from 'react';
 import { AppContext } from '../hooks/useApp';
 import { css } from '../lib/css';
-import { heroSlides, testimonialsData, teaserPhotos } from '../data/content';
+import { heroSlides, testimonialsData } from '../data/content';
 import HeroEditorial from '../components/HeroEditorial';
 import IntroSection from '../components/IntroSection';
+import FeaturedMarquee from '../components/FeaturedMarquee';
 
 export default function Home() {
   const {
@@ -49,7 +50,6 @@ export default function Home() {
   const heroToggleLabel = heroPaused ? 'Play slideshow' : 'Pause slideshow';
   const heroPlaying = !heroPaused;
 
-  const stripPhotos = teaserPhotos.slice(0, 7); // Figma: the first four are landscape-ish 494x656 tiles, the rest 378x568
   const testimonial = testimonialsData[0];
 
   return (
@@ -80,11 +80,7 @@ export default function Home() {
 
       <IntroSection />
 
-      <section aria-label="Featured client photography" className="home-strip" style={css(`display:flex;gap:12px;align-items:center;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none;`)}>
-        {stripPhotos.map((src, i) => (
-          <img key={src} src={src} alt="Featured client photography" loading="lazy" draggable="false" style={css(`flex:none;height:clamp(340px,46vw,656px);aspect-ratio:${i < 4 ? '494 / 656' : '378 / 568'};object-fit:cover;border-radius:16px;display:block;`)} />
-        ))}
-      </section>
+      <FeaturedMarquee />
 
       <section style={css(`display:flex;flex-wrap:wrap;gap:40px 64px;align-items:center;justify-content:space-between;padding:60px clamp(24px,5.8vw,102px);`)}>
         <div style={css(`flex:1 1 420px;max-width:683px;display:flex;flex-direction:column;gap:32px;`)}>

@@ -40,3 +40,14 @@ html[data-intro] .hero-ed-item { animation-play-state: paused; }
 
 /* Stop at the top/bottom instead of rubber-banding. */
 html, body { overscroll-behavior-y: none; }
+
+/* Featured photos: continuously scrolling strip (FeaturedMarquee) */
+.featured-marquee{overflow:hidden;}
+.featured-track{display:flex;width:max-content;animation:featuredScroll linear infinite;will-change:transform;}
+.featured-photo{flex:none;display:block;height:clamp(340px,46vw,656px);width:auto;margin-right:12px;border-radius:16px;object-fit:cover;}
+@keyframes featuredScroll{from{transform:translate3d(0,0,0);}to{transform:translate3d(-50%,0,0);}}
+@media (prefers-reduced-motion: reduce){
+  .featured-marquee{overflow-x:auto;scrollbar-width:none;}
+  .featured-track{animation:none;}
+  .featured-dup{display:none !important;}
+}
