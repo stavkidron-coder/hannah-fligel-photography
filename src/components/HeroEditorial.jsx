@@ -83,7 +83,7 @@ export default function HeroEditorial() {
 
       // Where the page's scroll sits when the hero pins, so scroll position maps to timeline position.
       const pinY = wrap.current.getBoundingClientRect().top + window.scrollY - navH;
-      L = { travel, walk, hold, fade, n: onScreen.length, pinY };
+      L = { travel, walk, hold, fade, n: onScreen.length, pinY, end: pinY + walk + hold + fade };
       wrap.current.dataset.logoStart = String(pinY + walk + hold);
       // The logo animation runs until the next section (the intro text) is fully on screen: its bottom edge reaching the bottom of the viewport.
       const next = wrap.current.nextElementSibling;
@@ -123,12 +123,42 @@ export default function HeroEditorial() {
       refreshActive();
     }
 
+    // Sideways input drives the hero too: a mostly-horizontal wheel/trackpad gesture (or Left/Right arrow) moves the page's scroll
+    // position, so the walk, fade and nav logo respond exactly as they do to vertical scrolling. Swiping left moves forward.
+    // It only acts inside the hero's own scroll range, so at its end vertical scrolling carries on as normal.
+    const nudge = (d) => {
+      if (!L) return false;
+      const y = window.scrollY;
+      if (y > L.end + 1 || (d > 0 && y >= L.end - 0.5) || (d < 0 && y <= 0)) return false;
+      window.scrollTo({ top: Math.min(L.end, Math.max(0, y + d)), behavior: 'instant' });
+      return true;
+    };
+    const onWheel = (e) => {
+      if (e.ctrlKey || Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return;
+      const d = e.deltaX * (e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? window.innerHeight : 1);
+      // Always swallow it inside the hero so it can't trigger the browser's swipe back/forward.
+      if (window.scrollY <= L.end + 1) { e.preventDefault(); nudge(d); }
+    };
+    const onKey = (e) => {
+      if ((e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') || e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
+      const t = e.target && e.target.tagName;
+      if (t === 'INPUT' || t === 'TEXTAREA' || t === 'SELECT') return;
+      if (nudge(e.key === 'ArrowRight' ? 40 : -40)) e.preventDefault();
+    };
+    window.addEventListener('wheel', onWheel, { passive: false });
+    window.addEventListener('keydown', onKey);
+    const prevOverscroll = document.documentElement.style.overscrollBehaviorX;
+    document.documentElement.style.overscrollBehaviorX = 'none';
+
     layout();
     const unsub = subscribeSmoothScroll(update);
     window.addEventListener('resize', layout);
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(layout);
     return () => {
       unsub();
+      window.removeEventListener('wheel', onWheel);
+      window.removeEventListener('keydown', onKey);
+      document.documentElement.style.overscrollBehaviorX = prevOverscroll;
       stage.current && stage.current.removeEventListener('pointermove', onPointerMove);
       stage.current && stage.current.removeEventListener('pointerleave', onPointerLeave);
       window.removeEventListener('resize', layout);
