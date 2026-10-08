@@ -1,47 +1,28 @@
-import { useContext, useLayoutEffect, useRef } from 'react';
+import { useContext, useLayoutEffect, useRef, useState } from 'react';
 import { AppContext } from '../hooks/useApp';
 import { css } from '../lib/css';
 import { cloudinaryUrl } from '../lib/cloudinary';
-import { smoothY, subscribeSmoothScroll } from '../lib/smoothScroll';
 
 // Figma "Intro Section": copy blocks joined by thin elbow connectors round a photo-filled pull-quote.
-// The desktop layout is the Figma frame (1750 wide) scaled to fit the viewport and pinned while it builds up on scroll:
-// text 1 rises in, line 1 draws to text 2, which rises in, line 2 draws to the quote, line 3 draws to the last text, line 4 drops from it toward the photo strip.
+// The desktop layout is the Figma frame (1750 wide) scaled to fit the viewport. Everything fades in together, and the connectors draw, the first time it scrolls into view.
 // Below DESKTOP_MIN the blocks stack and each simply rises in as it scrolls into view.
 const STAGE_W = 1750;
 const CROP_TOP = 280, CROP_H = 860; // the frame has a lot of empty space above and below the content
 const DESKTOP_MIN = 1100;
+const BOTTOM_GAP = 64;  // px kept clear below the last line, so it never touches the photo strip that follows
 const LINE = '#BBA17C';
 
-// Scroll timeline, in screen heights of scroll after the scene pins.
-const PIN_VH = 4;       // total scroll distance the scene is pinned for
-const EARLY_VH = 0.3;   // the scene pins this much before the hero photos have finished fading, so text 1 starts as they go
-const TEXT_VH = 0.35;   // how long each text block takes to rise in
-const HOLD_VH = 0.4;    // pause at the end before the page moves on
 const RISE = 40;        // px (in Figma units) a block travels up as it fades in
+const FADE_MS = 1100, DRAW_MS = 1600;
 
 // Connectors in Figma coordinates, each running from the text it leaves to the text it reaches.
+// Horizontal ends sit on the vertical middle of the text's first/last line (33.2px line boxes).
 const PATHS = [
-  [[549, 472], [874, 472], [874, 374], [942, 374]],
-  [[1404, 480], [1489, 480], [1489, 660], [1342, 660]],
-  [[310, 820], [102, 820], [102, 977], [504, 977]],
+  [[549, 485.3], [874, 485.3], [874, 375.5], [942, 375.5]],
+  [[1404, 475.1], [1489, 475.1], [1489, 660], [1342, 660]],
+  [[310, 820], [102, 820], [102, 974.5], [504, 974.5]],
   [[875, 1035], [875, 1140]],
 ];
-const lengthOf = (pts) => pts.reduce((a, p, i) => (i ? a + Math.abs(p[0] - pts[i - 1][0]) + Math.abs(p[1] - pts[i - 1][1]) : 0), 0);
-const LENGTHS = PATHS.map(lengthOf);
-// Every line draws at the same speed, so the scroll each one takes is proportional to its length.
-const PX_VH = (PIN_VH - HOLD_VH - 4 * TEXT_VH) / LENGTHS.reduce((a, b) => a + b, 0);
-// Start/end of each step, in screen heights: text 1, line 1, text 2, line 2, quote, line 3, text 4, line 4.
-const STEPS = (() => {
-  const out = [];
-  let t = 0;
-  const add = (d) => { out.push([t, t + d]); t += d; };
-  add(TEXT_VH); add(LENGTHS[0] * PX_VH); add(TEXT_VH); add(LENGTHS[1] * PX_VH); add(TEXT_VH); add(LENGTHS[2] * PX_VH); add(TEXT_VH); add(LENGTHS[3] * PX_VH);
-  return out;
-})();
-
-const clamp01 = (v) => Math.min(1, Math.max(0, v));
-const smooth = (t) => t * t * (3 - 2 * t);
 const reduced = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 const body = `font-size:20px;line-height:33.2px;color:var(--soft);margin:0;`;
@@ -78,37 +59,28 @@ function useRiseOnView(ref, active) {
 export default function IntroSection() {
   const { width } = useContext(AppContext);
   const desktop = width > DESKTOP_MIN;
-  const s = Math.min(1, width / STAGE_W);
+  const [vh, setVh] = useState(typeof window !== 'undefined' ? window.innerHeight : 900);
+  useLayoutEffect(() => {
+    const onResize = () => setVh(window.innerHeight);
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+  // Once scrolled, the nav's cream fade (NavEditorial) covers this much of the top of the screen; the scene sits below it
+  // and shrinks to fit the remaining height, so the first heading is never under the fade and the last line stops short of the photo strip.
+  const fadeH = (2 * Math.max(12, 0.0097 * width) + 36) * 1.9;
+  const s = Math.min(1, width / STAGE_W, (vh - fadeH - BOTTOM_GAP) / CROP_H);
 
-  const wrap = useRef(null), stack = useRef(null), blocks = useRef([]), lines = useRef([]);
+  const wrap = useRef(null), stack = useRef(null);
+  const [shown, setShown] = useState(reduced);
   useRiseOnView(stack, !desktop);
 
+  // Everything fades in at once, the first time a good part of the scene is on screen.
   useLayoutEffect(() => {
-    if (!desktop) return;
-    let pinY = 0;
-    const measure = () => { pinY = wrap.current.getBoundingClientRect().top + window.scrollY; update(); };
-    function update(y = smoothY()) {
-      const sv = (y - pinY) / window.innerHeight; // scroll since the scene pinned, in screen heights
-      const at = (i) => (reduced ? 1 : smooth(clamp01((sv - STEPS[i][0]) / (STEPS[i][1] - STEPS[i][0]))));
-      // blocks: text 1, text 2, quote, text 4 are steps 0, 2, 4, 6
-      [0, 2, 4, 6].forEach((step, k) => {
-        const el = blocks.current[k], p = at(step);
-        el.style.opacity = String(p);
-        el.style.translate = `0 ${(1 - p) * RISE}px`;
-      });
-      // lines are steps 1, 3, 5; drawn linearly with scroll so the pen moves at a steady speed
-      [1, 3, 5, 7].forEach((step, k) => {
-        const p = reduced ? 1 : clamp01((sv - STEPS[step][0]) / (STEPS[step][1] - STEPS[step][0]));
-        lines.current[k].style.strokeDashoffset = String(1 - p);
-      });
-    }
-    measure();
-    const unsub = subscribeSmoothScroll(update);
-    // The hero re-measures itself on resize and tells us once it has, since where it ends decides where this scene starts.
-    window.addEventListener('hero-editorial-layout', measure);
-    window.addEventListener('resize', measure);
-    return () => { unsub(); window.removeEventListener('hero-editorial-layout', measure); window.removeEventListener('resize', measure); };
-  }, [desktop]);
+    if (!desktop || shown || !('IntersectionObserver' in window)) { if (desktop && !('IntersectionObserver' in window)) setShown(true); return; }
+    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setShown(true); io.disconnect(); } }, { threshold: 0.4 });
+    io.observe(wrap.current);
+    return () => io.disconnect();
+  }, [desktop, shown]);
 
   if (!desktop) {
     return (
@@ -126,33 +98,30 @@ export default function IntroSection() {
     );
   }
 
-  const hidden = reduced ? '' : 'opacity:0;';
-  // The wrapper overlaps the end of the hero (which is empty once its photos have faded) so the scene pins EARLY_VH early.
   // Blocks rise with the separate `translate` property so the centring `transform` on two of them is left alone.
+  const fade = `opacity:${shown ? 1 : 0};translate:0 ${shown ? 0 : RISE}px;transition:opacity ${FADE_MS}ms ease-out,translate ${FADE_MS}ms ease-out;`;
   return (
-    <section ref={wrap} data-scene="intro" style={css(`position:relative;height:${(1 + PIN_VH) * 100}dvh;margin-top:-${(1 + EARLY_VH) * 100}dvh;pointer-events:none;`)}>
-      <div style={css(`position:sticky;top:0;height:100dvh;display:flex;align-items:center;`)}>
-        <div style={css(`position:relative;overflow:hidden;width:100%;height:${CROP_H * s}px;`)}>
-          <div style={css(`position:absolute;left:0;top:0;width:${STAGE_W}px;height:${CROP_H}px;transform:scale(${s});transform-origin:top left;`)}>
-            <svg aria-hidden="true" width={STAGE_W} height={CROP_H} style={css(`position:absolute;left:0;top:0;overflow:visible;`)}>
-              {PATHS.map((pts, i) => (
-                <polyline key={i} ref={(el) => { lines.current[i] = el; }} points={pts.map(([x, y]) => `${x},${y - CROP_TOP}`).join(' ')}
-                  fill="none" stroke={LINE} strokeWidth={1 / s} pathLength="1" style={{ strokeDasharray: '1 1', strokeDashoffset: reduced ? 0 : 1 }} />
-              ))}
-            </svg>
+    <section ref={wrap} style={css(`position:relative;min-height:100dvh;box-sizing:border-box;padding:${fadeH}px 0 ${BOTTOM_GAP}px;display:flex;align-items:center;justify-content:center;`)}>
+      <div style={css(`position:relative;overflow:hidden;flex:none;width:${STAGE_W * s}px;height:${CROP_H * s}px;`)}>
+        <div style={css(`position:absolute;left:0;top:0;width:${STAGE_W}px;height:${CROP_H}px;transform:scale(${s});transform-origin:top left;`)}>
+          <svg aria-hidden="true" width={STAGE_W} height={CROP_H} style={css(`position:absolute;left:0;top:0;overflow:visible;`)}>
+            {PATHS.map((pts, i) => (
+              <polyline key={i} points={pts.map(([x, y]) => `${x},${y - CROP_TOP}`).join(' ')}
+                fill="none" stroke={LINE} strokeWidth={1 / s} pathLength="1" style={{ strokeDasharray: '1 1', strokeDashoffset: shown ? 0 : 1, transition: `stroke-dashoffset ${DRAW_MS}ms ease-in-out` }} />
+            ))}
+          </svg>
 
-            <div ref={(el) => { blocks.current[0] = el; }} style={css(`${hidden}position:absolute;left:102px;top:${303 - CROP_TOP}px;width:507px;`)}>
-              <h2 style={css(`${heading}line-height:33.2px;`)}>Hi, I'm Hannah</h2>
-              <div aria-hidden="true" style={css(`height:1px;background:${LINE};margin:16px 0;`)} />
-              <p style={css(body)}>{copy1}</p>
-            </div>
-
-            <p ref={(el) => { blocks.current[1] = el; }} style={css(`${body}${hidden}position:absolute;left:960px;top:${359 - CROP_TOP}px;width:627px;`)}>{copy2}</p>
-
-            <p ref={(el) => { blocks.current[2] = el; }} style={css(`${quoteStyle}${hidden}position:absolute;left:50%;top:${564 - CROP_TOP}px;transform:translateX(-50%);white-space:nowrap;font-size:128px;line-height:normal;`)}>{quoteEl}</p>
-
-            <p ref={(el) => { blocks.current[3] = el; }} style={css(`${body}${hidden}position:absolute;left:50%;top:${958 - CROP_TOP}px;width:740px;transform:translateX(-50%);text-align:center;`)}>{copy3}</p>
+          <div style={css(`${fade}position:absolute;left:102px;top:${303 - CROP_TOP}px;width:507px;`)}>
+            <h2 style={css(`${heading}line-height:33.2px;`)}>Hi, I'm Hannah</h2>
+            <div aria-hidden="true" style={css(`height:1px;background:${LINE};margin:16px 0;`)} />
+            <p style={css(body)}>{copy1}</p>
           </div>
+
+          <p style={css(`${body}${fade}position:absolute;left:960px;top:${359 - CROP_TOP}px;width:627px;`)}>{copy2}</p>
+
+          <p style={css(`${quoteStyle}${fade}position:absolute;left:50%;top:${564 - CROP_TOP}px;transform:translateX(-50%);white-space:nowrap;font-size:128px;line-height:normal;`)}>{quoteEl}</p>
+
+          <p style={css(`${body}${fade}position:absolute;left:50%;top:${958 - CROP_TOP}px;width:740px;transform:translateX(-50%);text-align:center;`)}>{copy3}</p>
         </div>
       </div>
     </section>

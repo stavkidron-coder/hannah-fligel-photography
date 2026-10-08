@@ -3,7 +3,6 @@ import { AppContext } from '../hooks/useApp';
 import { css } from '../lib/css';
 import { NAV_EDITORIAL_H } from './NavEditorial';
 import { cloudinaryFromLocal } from '../lib/cloudinary';
-import { smoothY, subscribeSmoothScroll } from '../lib/smoothScroll';
 
 // Each photo opens Work pre-filtered; the Work page only has Families / Maternity / Couples tabs, so portraits and engagements land on Couples.
 // Figma "Hero Images": a row of category photos with small labels above each.
@@ -16,15 +15,16 @@ const slides = [
   { label: 'engagements', cat: 'couples', src: cloudinaryFromLocal('/images/portraits/nandini-srikanth/NandiniANDSrikanth259.jpg', 1400), ratio: '1067 / 1600' },
 ];
 
-// Scroll timeline (px of scroll after the hero pins): the row walks left until the last photo is flush right,
-// then a short hold, then the photos on screen fade out one after another, left to right, and the hero unpins. The nav logo animation starts together with the fade.
-const WALK_PACE = 1.35;  // px of scroll per px the row moves; above 1 slows the walk down
+// The row drifts right to left on a loop. It is rendered COPIES times and wraps by exactly one set, so the loop is seamless.
+// Sideways wheel/trackpad input and Left/Right arrows nudge it along (or back) without touching the page scroll.
+// The hero is an ordinary section: it scrolls away with the page, and the nav logo animation plays on that scroll down to the intro.
+const SPEED = 40;        // px per second
+const COPIES = 3;        // enough that a set always covers the viewport, whatever its size
 const PHOTO_GAP = 0;     // px between photos (the Figma design has 20)
-const HOLD_VH = 0.5;     // buffer after the walk ends where the last photos just sit, so one big scroll doesn't run straight into the fade
-const FADE_VH = 1.5;       // fade-out phase length, in screen heights
+const NUDGE_TAU = 120;   // ms; how quickly a nudge glides to rest
 const MIN_LOGO_PX = 300; // shortest the logo animation may be, if the next section is very short
 
-const clamp01 = (v) => Math.min(1, Math.max(0, v));
+const reduced = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 export default function HeroEditorial() {
   const { setCat } = useContext(AppContext);
@@ -35,8 +35,9 @@ export default function HeroEditorial() {
 
   useLayoutEffect(() => {
     const els = [...row.current.querySelectorAll('.hero-ed-item')];
-    const items = els.map((el) => ({ el, rank: -1, label: el.querySelector('.hero-ed-label'), labelW: 0 }));
-    let L = null; // layout numbers
+    const items = els.map((el) => ({ el, label: el.querySelector('.hero-ed-label'), labelW: 0 }));
+    const n = slides.length;
+    let period = 0, pos = 0, pending = 0, last = 0, raf = 0;
 
     // The highlighted photo is whichever one is under the mouse. CSS :hover doesn't refresh while the row slides under a still
     // pointer, so remember the pointer and re-run the hit test on every animation frame.
@@ -45,7 +46,6 @@ export default function HeroEditorial() {
       let active = null;
       if (pointer) {
         active = items.find((it) => {
-          if (it.el.style.pointerEvents === 'none') return false;
           const r = it.el.getBoundingClientRect();
           return pointer.x >= r.left && pointer.x <= r.right && pointer.y >= r.top && pointer.y <= r.bottom;
         }) || null;
@@ -66,39 +66,24 @@ export default function HeroEditorial() {
       const vw = window.innerWidth, vh = window.innerHeight;
       const navH = Math.max(72, vw * 0.0629);
       const stageH = Math.max(480, vh - navH);
-      stage.current.style.top = `${navH}px`;
       stage.current.style.height = `${stageH}px`;
       items.forEach((it) => { it.labelW = it.label.offsetWidth; });
-      const last = els[els.length - 1];
-      const rowW = last.offsetLeft + last.offsetWidth;
-      const travel = Math.max(0, rowW - vw);
-      const walk = travel * WALK_PACE, hold = vh * HOLD_VH, fade = vh * FADE_VH;
-      // The pin ends with the fade, so the page moves on right away; the logo animation plays while the next section scrolls up.
-      wrap.current.style.height = `${stageH + walk + hold + fade}px`;
+      period = els[n].offsetLeft - els[0].offsetLeft;
 
-      // Which photos are on screen once the row has walked to its end, left to right: those are the ones that fade out.
-      const onScreen = items.filter((it) => it.el.offsetLeft + it.el.offsetWidth - travel > 0 && it.el.offsetLeft - travel < vw)
-        .sort((a, b) => a.el.offsetLeft - b.el.offsetLeft);
-      items.forEach((it) => { it.rank = onScreen.indexOf(it); });
-
-      // Where the page's scroll sits when the hero pins, so scroll position maps to timeline position.
-      const pinY = wrap.current.getBoundingClientRect().top + window.scrollY - navH;
-      L = { travel, walk, hold, fade, n: onScreen.length, pinY, end: pinY + walk + hold + fade };
-      wrap.current.dataset.logoStart = String(pinY + walk + hold);
-      // The logo animation runs until the next section (the intro text) is fully on screen: its bottom edge reaching the bottom of the viewport.
-      const next = wrap.current.nextElementSibling;
+      // The logo animation plays over the scroll from the top of the page until the intro scene pins.
       // If the next section is a pinned scene (data-scene) the logo finishes as that scene starts, otherwise when the section's bottom edge reaches the bottom of the viewport.
+      const next = wrap.current.nextElementSibling;
       const nextEnd = !next ? 0 : next.dataset.scene ? next.getBoundingClientRect().top + window.scrollY : next.getBoundingClientRect().bottom + window.scrollY - vh;
-      const logoStart = pinY + walk + hold;
-      wrap.current.dataset.logoEnd = String(Math.max(logoStart + MIN_LOGO_PX, nextEnd));
+      wrap.current.dataset.logoStart = '0';
+      wrap.current.dataset.logoEnd = String(Math.max(MIN_LOGO_PX, nextEnd));
       window.dispatchEvent(new Event('hero-editorial-layout'));
-      update();
+      render();
     };
 
-    function update(y = smoothY()) {
-      if (!L) return;
-      const s = y - L.pinY;
-      const tx = -Math.min(Math.max(s / WALK_PACE, 0), L.travel);
+    function render() {
+      if (!period) return;
+      pos = ((pos % period) + period) % period;
+      const tx = -pos;
       row.current.style.transform = `translate3d(${tx}px,0,0)`;
       // A photo's label sits at its right edge. While the photo is cut off at the right of the screen the label stays on screen,
       // but never leaves its own photo, so a photo that is only just peeking in takes its label with it.
@@ -108,42 +93,34 @@ export default function HeroEditorial() {
         const dx = Math.max(Math.min(right, vw), left + it.labelW) - right;
         it.label.style.transform = dx ? `translate3d(${dx}px,0,0)` : '';
       });
-      const d = clamp01((s - L.walk - L.hold) / L.fade);
-      // Each on-screen photo gets a window of the fade phase, staggered left to right with overlap.
-      const w = Math.min(1, 1.6 / Math.max(L.n, 1));
-      items.forEach((it) => {
-        let q = 0;
-        if (it.rank >= 0) {
-          const start = L.n > 1 ? it.rank * (1 - w) / (L.n - 1) : 0;
-          q = clamp01((d - start) / w);
-        }
-        it.el.style.pointerEvents = q > 0 ? 'none' : '';
-        it.el.style.opacity = q > 0 ? String(1 - q) : '';
-      });
       refreshActive();
     }
 
-    // Sideways input drives the hero too: a mostly-horizontal wheel/trackpad gesture (or Left/Right arrow) moves the page's scroll
-    // position, so the walk, fade and nav logo respond exactly as they do to vertical scrolling. Swiping left moves forward.
-    // It only acts inside the hero's own scroll range, so at its end vertical scrolling carries on as normal.
-    const nudge = (d) => {
-      if (!L) return false;
-      const y = window.scrollY;
-      if (y > L.end + 1 || (d > 0 && y >= L.end - 0.5) || (d < 0 && y <= 0)) return false;
-      window.scrollTo({ top: Math.min(L.end, Math.max(0, y + d)), behavior: 'instant' });
-      return true;
+    const tick = (now) => {
+      raf = requestAnimationFrame(tick);
+      const dt = Math.min(64, now - (last || now));
+      last = now;
+      let step = 0;
+      if (!reduced && !document.documentElement.dataset.intro) step += SPEED * dt / 1000;
+      if (Math.abs(pending) > 0.05) { const k = pending * (1 - Math.exp(-dt / NUDGE_TAU)); pending -= k; step += k; } else pending = 0;
+      if (step) { pos += step; render(); }
     };
+
+    // Sideways input moves the carousel: a mostly-horizontal wheel/trackpad gesture (or Left/Right arrow) over the hero.
+    // Swiping left moves forward. Always swallowed over the hero so it can't trigger the browser's swipe back/forward.
     const onWheel = (e) => {
-      if (e.ctrlKey || Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return;
-      const d = e.deltaX * (e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? window.innerHeight : 1);
-      // Always swallow it inside the hero so it can't trigger the browser's swipe back/forward.
-      if (window.scrollY <= L.end + 1) { e.preventDefault(); nudge(d); }
+      if (e.ctrlKey || Math.abs(e.deltaX) <= Math.abs(e.deltaY) || !stage.current.contains(e.target)) return;
+      e.preventDefault();
+      pending += e.deltaX * (e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? window.innerWidth : 1);
     };
     const onKey = (e) => {
       if ((e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') || e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
       const t = e.target && e.target.tagName;
       if (t === 'INPUT' || t === 'TEXTAREA' || t === 'SELECT') return;
-      if (nudge(e.key === 'ArrowRight' ? 40 : -40)) e.preventDefault();
+      const r = stage.current.getBoundingClientRect();
+      if (r.bottom <= 0 || r.top >= window.innerHeight) return;
+      e.preventDefault();
+      pending += e.key === 'ArrowRight' ? 160 : -160;
     };
     window.addEventListener('wheel', onWheel, { passive: false });
     window.addEventListener('keydown', onKey);
@@ -151,11 +128,11 @@ export default function HeroEditorial() {
     document.documentElement.style.overscrollBehaviorX = 'none';
 
     layout();
-    const unsub = subscribeSmoothScroll(update);
+    raf = requestAnimationFrame(tick);
     window.addEventListener('resize', layout);
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(layout);
     return () => {
-      unsub();
+      cancelAnimationFrame(raf);
       window.removeEventListener('wheel', onWheel);
       window.removeEventListener('keydown', onKey);
       document.documentElement.style.overscrollBehaviorX = prevOverscroll;
@@ -166,18 +143,18 @@ export default function HeroEditorial() {
   }, []);
 
   return (
-    <section ref={wrap} id="hero-editorial" aria-label="Featured photography" style={css(`position:relative;height:400vh;`)}>
-      <div ref={stage} style={css(`position:sticky;top:${NAV_EDITORIAL_H};height:calc(100dvh - ${NAV_EDITORIAL_H});min-height:480px;overflow:hidden;`)}>
+    <section ref={wrap} id="hero-editorial" aria-label="Featured photography" style={css(`position:relative;`)}>
+      <div ref={stage} style={css(`height:calc(100dvh - ${NAV_EDITORIAL_H});min-height:480px;overflow:hidden;`)}>
         <div ref={row} className="hero-editorial-row" style={css(`display:flex;gap:${PHOTO_GAP}px;height:100%;will-change:transform;`)}>
-          {slides.map((s, i) => (
-            <button key={s.label} className="hero-ed-item" onClick={() => open(s.cat)} aria-label={`View ${s.label} work`} style={{ ...css(`flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:3px;background:none;border:none;padding:0;cursor:pointer;`), '--i': i }}>
+          {Array.from({ length: COPIES }, (_, c) => slides.map((s, i) => (
+            <button key={`${c}-${s.label}`} className="hero-ed-item" onClick={() => open(s.cat)} aria-label={`View ${s.label} work`} aria-hidden={c ? 'true' : undefined} tabIndex={c ? -1 : undefined} style={{ ...css(`flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:3px;background:none;border:none;padding:0;cursor:pointer;`), '--i': i }}>
               <span className="hero-ed-label" aria-hidden="true" style={css(`padding-right:12px;font-family:'DM Mono',monospace;font-size:12px;font-weight:400;line-height:15px;`)}>{s.label}</span>
               <span className="hero-ed-photo" style={{ position: 'relative', display: 'block', height: `max(${imgH}, 440px)`, aspectRatio: s.ratio }}>
                 <img src={s.src} alt="" draggable="false" style={{ display: 'block', width: '100%', height: '100%', objectFit: 'cover' }} />
                 <span aria-hidden="true" className="hero-ed-dim"></span>
               </span>
             </button>
-          ))}
+          )))}
         </div>
       </div>
     </section>
