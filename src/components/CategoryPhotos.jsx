@@ -2,8 +2,10 @@ import { useContext } from 'react';
 import { AppContext } from '../hooks/useApp';
 import { css } from '../lib/css';
 import { cloudinaryUrl, cloudinarySrcSet } from '../lib/cloudinary';
+import Button from './Button';
 
-// Figma "Categories": one portrait photo per session type, each with a small mono label above it. A photo opens Work filtered to that type.
+// Figma "Categories": a "session types" heading with a link to all work, then one portrait photo per session type with a small mono label under it.
+// A photo opens Work filtered to that type.
 const WIDTHS = [600, 900, 1200];
 const categories = [
   { label: 'families', cat: 'families', src: cloudinaryUrl('galleries/families/baby-ollie/baby-ollie40', 900) },
@@ -12,20 +14,29 @@ const categories = [
 ];
 
 export default function CategoryPhotos() {
-  const { setCat, width } = useContext(AppContext);
+  const { setCat, go, width } = useContext(AppContext);
   const open = (cat) => { setCat(cat); try { window.scrollTo(0, 0); } catch (e) {} };
   const cols = width > 680 ? 3 : 1;
 
   return (
-    <section aria-label="Session types" className="category-photos" style={css(`padding:var(--space-40) var(--layout-media-margin);display:grid;grid-template-columns:repeat(${cols},minmax(0,1fr));gap:var(--space-12);`)}>
-      {categories.map((c) => (
-        <button key={c.cat} className="category-photo" onClick={() => open(c.cat)} aria-label={`View ${c.label} work`}
-          style={css(`display:flex;flex-direction:column;align-items:flex-start;gap:var(--space-8);background:none;border:none;padding:0;cursor:pointer;text-align:left;`)}>
-          <span className="t-mono category-photo__label" style={css(`transition:color .4s ease;`)}>{c.label}</span>
-          <img src={c.src} srcSet={cloudinarySrcSet(c.src, WIDTHS)} sizes={width > 680 ? '33vw' : '100vw'} alt="" loading="lazy" draggable="false"
-            style={css(`display:block;width:100%;aspect-ratio:532 / 700;object-fit:cover;border-radius:var(--radius-none);`)} />
-        </button>
-      ))}
+    <section aria-labelledby="session-types-heading" style={css(`padding:var(--space-40) var(--layout-media-margin);display:flex;flex-direction:column;gap:var(--space-4);`)}>
+      <div style={css(`display:flex;align-items:center;justify-content:space-between;gap:var(--space-16);`)}>
+        <div style={css(`display:flex;align-items:center;gap:var(--space-8);`)}>
+          <span aria-hidden="true" style={css(`width:6px;height:6px;border-radius:50%;background:var(--color-text-primary);flex:none;`)}></span>
+          <h2 id="session-types-heading" className="t-body" style={css(`font-weight:400;`)}>session types</h2>
+        </div>
+        <Button variant="text" onClick={() => go('work')}>View all galleries →</Button>
+      </div>
+      <div className="category-photos" style={css(`display:grid;grid-template-columns:repeat(${cols},minmax(0,1fr));gap:var(--layout-media-margin);`)}>
+        {categories.map((c) => (
+          <button key={c.cat} className="category-photo" onClick={() => open(c.cat)} aria-label={`View ${c.label} work`}
+            style={css(`display:flex;flex-direction:column;align-items:flex-start;gap:var(--space-8);background:none;border:none;padding:0;cursor:pointer;text-align:left;`)}>
+            <img src={c.src} srcSet={cloudinarySrcSet(c.src, WIDTHS)} sizes={width > 680 ? '33vw' : '100vw'} alt="" loading="lazy" draggable="false"
+              style={css(`display:block;width:100%;aspect-ratio:532 / 700;object-fit:cover;border-radius:var(--radius-none);`)} />
+            <span className="t-mono category-photo__label">{c.label}</span>
+          </button>
+        ))}
+      </div>
     </section>
   );
 }

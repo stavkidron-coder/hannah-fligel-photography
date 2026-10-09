@@ -108,6 +108,7 @@ html[data-intro] .hero-ed-item { animation-play-state: paused; }
 /* Stop at the top/bottom instead of rubber-banding. */
 html, body { overscroll-behavior-y: none; }
 
-/* Home: category photos. The label darkens with its photo's hover/focus, like the hero labels. */
+/* Home: category photos. Labels sit under the photos in text/secondary and darken with the photo's hover/focus. */
+.category-photo__label{color:var(--color-text-secondary);transition:color .4s ease;}
 .category-photo:hover .category-photo__label,.category-photo:focus-visible .category-photo__label{color:var(--color-text-primary);}
 .category-photo:focus-visible{outline-offset:4px;}
