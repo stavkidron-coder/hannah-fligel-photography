@@ -1,6 +1,6 @@
 import { createContext, useCallback, useEffect, useLayoutEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { heroSlides, testimonialsData, teaserPhotos } from '../data/content';
+import { heroSlides, testimonialsData } from '../data/content';
 import { allSessions } from '../data/sessions';
 import { heroIntervalSec, batchSize } from '../config';
 import { hashFor, parseHash, setTitle } from '../lib/routes';
@@ -227,7 +227,6 @@ export function useApp() {
       setWidth(w);
     };
     window.addEventListener('resize', onResize);
-    ensureOrientations(teaserPhotos);
     if (!reducedMotion.current) {
       testimonialTimer.current = setInterval(() => advanceTestimonial(), TESTIMONIAL_HOLD_MS);
     }

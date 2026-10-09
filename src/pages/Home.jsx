@@ -3,8 +3,8 @@ import { AppContext } from '../hooks/useApp';
 import { css } from '../lib/css';
 import { heroSlides, testimonialsData } from '../data/content';
 import HeroEditorial from '../components/HeroEditorial';
-import IntroSection from '../components/IntroSection';
-import FeaturedMarquee from '../components/FeaturedMarquee';
+import Button from '../components/Button';
+import CategoryPhotos from '../components/CategoryPhotos';
 
 export default function Home() {
   const {
@@ -12,7 +12,7 @@ export default function Home() {
     activeTestimonialIndex, testimonialFading,
   } = useContext(AppContext);
   const isDesktop = width > 680;
-  const navInvest = () => go('pricing'), navContact = () => go('contact');
+  const navInvest = () => go('pricing'), navWork = () => go('work'), navAbout = () => go('about');
 
   const heroDots = heroSlides.map((s, i) => (
     <button
@@ -79,18 +79,24 @@ export default function Home() {
       </section>
       )}
 
-      <IntroSection />
-
-      <FeaturedMarquee />
-
-      <section style={css(`display:flex;flex-wrap:wrap;gap:40px 64px;align-items:center;justify-content:space-between;padding:60px clamp(24px,5.8vw,102px);`)}>
-        <div style={css(`flex:1 1 420px;max-width:683px;display:flex;flex-direction:column;gap:32px;min-height:clamp(170px,14vw,190px);justify-content:center;opacity:${testimonialFading ? 0 : 1};transition:opacity 1.4s ease-in-out;`)}>
-          <p style={css(`margin:0;font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,2.6vw,30px);line-height:1.32;color:var(--ink);`)}>{testimonial.quote}</p>
-          <p style={css(`margin:0;font-family:'Mulish',sans-serif;font-size:12px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);`)}>{testimonial.author}</p>
+      <section aria-label="Introduction" style={css(`padding:var(--layout-section-y) var(--layout-page-margin);display:flex;flex-direction:column;align-items:flex-start;gap:var(--space-40);`)}>
+        <p className="t-lead" style={css(`max-width:835px;`)}>I believe a photograph isn’t about the pose.<br />It’s about being yourself, and having a story to look back on.</p>
+        <div style={css(`display:flex;flex-wrap:wrap;align-items:center;gap:var(--space-24);`)}>
+          <Button variant="primary" onClick={navWork}>See the work</Button>
+          <Button variant="text" onClick={navAbout}>Learn more →</Button>
         </div>
-        <div style={css(`display:flex;flex-direction:column;gap:12px;align-items:flex-start;`)}>
-          <p style={css(`margin:0;font-style:italic;font-size:clamp(19px,2.2vw,23px);color:var(--soft);`)}>Curious about working together?</p>
-          <button onClick={navInvest} style={css(`background:none;border:none;border-bottom:1px solid var(--muted);cursor:pointer;padding:0 0 3px;font-family:'Mulish',sans-serif;font-size:12px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--ink);`)}>View Pricing&nbsp;→</button>
+      </section>
+
+      <CategoryPhotos />
+
+      <section style={css(`display:flex;flex-wrap:wrap;gap:var(--space-40) var(--space-64);align-items:center;justify-content:space-between;padding:var(--space-64) var(--layout-page-margin);`)}>
+        <div style={css(`flex:1 1 420px;max-width:683px;display:flex;flex-direction:column;justify-content:center;min-height:175px;gap:var(--space-32);opacity:${testimonialFading ? 0 : 1};transition:opacity 1.4s ease-in-out;`)}>
+          <p className="t-quote-lg">{testimonial.quote}</p>
+          <p className="t-caption" style={css(`text-align:right;color:var(--color-text-tertiary);`)}>— <strong style={css(`font-weight:600;color:var(--color-text-primary);`)}>{testimonial.name}</strong> | {testimonial.detail}</p>
+        </div>
+        <div style={css(`display:flex;flex-direction:column;align-items:flex-end;gap:var(--space-24);`)}>
+          <p className="t-h3" style={css(`color:var(--color-text-secondary);`)}>Curious about working together?</p>
+          <Button variant="primary" onClick={navInvest}>View pricing →</Button>
         </div>
       </section>
     </main>

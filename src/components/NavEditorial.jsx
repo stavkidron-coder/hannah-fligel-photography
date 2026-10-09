@@ -100,7 +100,7 @@ export default function NavEditorial() {
   const setFade = (i) => (el) => { fades.current[i] = el; };
 
   return (
-    <nav style={css(`position:sticky;top:0;z-index:50;height:${NAV_EDITORIAL_H};box-sizing:border-box;display:flex;align-items:flex-start;justify-content:space-between;padding:${PAD_Y} 3.2vw 0;pointer-events:none;`)}>
+    <nav style={css(`position:sticky;top:0;z-index:50;height:${NAV_EDITORIAL_H};box-sizing:border-box;display:flex;align-items:flex-start;justify-content:space-between;padding:${PAD_Y} var(--layout-page-margin) 0;pointer-events:none;`)}>
       <div ref={bg} aria-hidden="true" style={css(`position:absolute;top:0;left:0;right:0;background:linear-gradient(to bottom,#F1EBE1 0%,rgba(241,235,225,.94) 20%,rgba(241,235,225,.75) 40%,rgba(241,235,225,.45) 60%,rgba(241,235,225,.18) 80%,rgba(241,235,225,0) 100%);`)}></div>
       <button ref={btn} onClick={() => go('home')} aria-label="Hannah Fligel Photography – Home" style={css(`position:relative;flex:none;pointer-events:auto;background:none;border:none;padding:0;cursor:pointer;color:${ink};font-size:max(26px,3.66vw);`)}>
         <span ref={box} aria-hidden="true" style={css(`position:absolute;left:0;top:0;width:${LOGO_W}px;height:${LOGO_H}px;box-sizing:border-box;opacity:0;backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);background:rgba(255,255,255,0.01);box-shadow:0 0 60px 30px rgba(250,246,239,0.3);`)}></span>
@@ -108,18 +108,18 @@ export default function NavEditorial() {
           {/* Starts top-centre and runs clockwise. */}
           <path ref={outline} d={`M${LOGO_W / 2} .5H${LOGO_W - .5}V${LOGO_H - .5}H.5V.5H${LOGO_W / 2}`} pathLength="1" fill="none" stroke="#2E2A24" strokeWidth="1" strokeDasharray="1" strokeDashoffset="1"></path>
         </svg>
-        <span ref={word} aria-hidden="true" style={css(`position:absolute;left:0;top:0;pointer-events:none;display:flex;align-items:baseline;gap:.1875em;white-space:nowrap;letter-spacing:.0375em;`)}>
-          <span style={css(`font-family:'Antic Didone',serif;font-size:1em;line-height:normal;`)}>
+        <span ref={word} aria-hidden="true" style={css(`position:absolute;left:0;top:0;pointer-events:none;display:flex;align-items:baseline;gap:.1875em;white-space:nowrap;`)}>
+          <span style={css(`font-family:var(--font-display);font-size:1em;line-height:normal;letter-spacing:-.005em;`)}>
             <span ref={hEl} style={letter}>H</span><span ref={setFade(0)}>annah</span>{' '}<span ref={fEl} style={letter}>F</span><span ref={setFade(1)}>ligel</span>
           </span>
-          <span style={css(`font-family:'Antic Didone',serif;font-size:.375em;line-height:normal;`)}>
+          <span style={css(`font-family:var(--font-display);font-size:.375em;line-height:normal;letter-spacing:.1em;`)}>
             <span ref={pEl} style={letter}>P</span><span ref={setFade(2)}>hotography</span>
           </span>
         </span>
       </button>
-      <div style={css(`position:relative;pointer-events:auto;display:flex;align-items:center;gap:clamp(14px,2.4vw,42px);`)}>
+      <div style={css(`position:relative;pointer-events:auto;display:flex;align-items:center;gap:clamp(16px,2.3vw,var(--space-40));`)}>
         {links.map(([label, key]) => (
-          <button key={key} className="nav-editorial-link" onClick={() => go(key)} aria-current={page === key ? 'page' : undefined} style={css(`background:none;border:none;cursor:pointer;padding:8px 0;font-family:'Mulish',sans-serif;font-size:12px;font-weight:600;letter-spacing:2.4px;text-transform:uppercase;color:var(--ink);position:relative;`)}>{label}<span aria-hidden="true" className="nav-editorial-line"></span></button>
+          <button key={key} className="nav-editorial-link t-label" onClick={() => go(key)} aria-current={page === key ? 'page' : undefined} style={css(`background:none;border:none;cursor:pointer;padding:8px 0;position:relative;`)}>{label}<span aria-hidden="true" className="nav-editorial-line"></span></button>
         ))}
       </div>
     </nav>

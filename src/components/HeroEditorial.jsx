@@ -6,7 +6,7 @@ import { cloudinaryFromLocal } from '../lib/cloudinary';
 
 // Each photo opens Work pre-filtered; the Work page only has Families / Maternity / Couples tabs, so portraits and engagements land on Couples.
 // Figma "Hero Images": a row of category photos with small labels above each.
-const LABEL_H = 18; // 15px label + 3px gap
+const LABEL_H = 19; // 15px label + 4px gap (space/4)
 const slides = [
   { label: 'portraits', cat: 'couples', src: cloudinaryFromLocal('/images/portraits/emma-senior-photos/emma-senior-photos147.jpg', 1400), ratio: '1067 / 1600' },
   { label: 'families', cat: 'families', src: cloudinaryFromLocal('/images/families/madison-tanya-hunter/Madison_Tanya_Hunter_2025-08_381.jpg', 1400), ratio: '1067 / 1600' },
@@ -147,8 +147,8 @@ export default function HeroEditorial() {
       <div ref={stage} style={css(`height:calc(100dvh - ${NAV_EDITORIAL_H});min-height:480px;overflow:hidden;`)}>
         <div ref={row} className="hero-editorial-row" style={css(`display:flex;gap:${PHOTO_GAP}px;height:100%;will-change:transform;`)}>
           {Array.from({ length: COPIES }, (_, c) => slides.map((s, i) => (
-            <button key={`${c}-${s.label}`} className="hero-ed-item" onClick={() => open(s.cat)} aria-label={`View ${s.label} work`} aria-hidden={c ? 'true' : undefined} tabIndex={c ? -1 : undefined} style={{ ...css(`flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:3px;background:none;border:none;padding:0;cursor:pointer;`), '--i': i }}>
-              <span className="hero-ed-label" aria-hidden="true" style={css(`padding-right:12px;font-family:'DM Mono',monospace;font-size:12px;font-weight:400;line-height:15px;`)}>{s.label}</span>
+            <button key={`${c}-${s.label}`} className="hero-ed-item" onClick={() => open(s.cat)} aria-label={`View ${s.label} work`} aria-hidden={c ? 'true' : undefined} tabIndex={c ? -1 : undefined} style={{ ...css(`flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:var(--space-4);background:none;border:none;padding:0;cursor:pointer;`), '--i': i }}>
+              <span className="hero-ed-label t-mono-sm" aria-hidden="true" style={css(`padding-right:var(--space-12);line-height:15px;`)}>{s.label}</span>
               <span className="hero-ed-photo" style={{ position: 'relative', display: 'block', height: `max(${imgH}, 440px)`, aspectRatio: s.ratio }}>
                 <img src={s.src} alt="" draggable="false" style={{ display: 'block', width: '100%', height: '100%', objectFit: 'cover' }} />
                 <span aria-hidden="true" className="hero-ed-dim"></span>
