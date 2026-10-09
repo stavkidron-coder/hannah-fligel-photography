@@ -61,8 +61,8 @@
 .btn--primary:hover{background:var(--color-bg-inverse-hover);}
 .btn--outline{box-shadow:inset 0 0 0 1px var(--color-border-strong);}
 .btn--outline:hover{background:var(--color-bg-inverse);color:var(--color-text-inverse);}
-.btn--text::after{content:'';position:absolute;left:var(--space-40);right:var(--space-40);bottom:calc(var(--space-16) - 4px);height:1px;background:var(--color-bg-inverse);transform:scaleX(0);transform-origin:left center;transition:transform .45s cubic-bezier(.65,0,.35,1);}
-.btn--text:hover::after,.btn--text:focus-visible::after{transform:scaleX(1);}
+.btn--text::after{content:'';position:absolute;left:var(--space-40);right:var(--space-40);bottom:calc(var(--space-16) - 4px);height:1px;background:var(--color-bg-inverse);transform:scaleX(0);transform-origin:right center;transition:transform .45s cubic-bezier(.65,0,.35,1);}
+.btn--text:hover::after,.btn--text:focus-visible::after{transform:scaleX(1);transform-origin:left center;}
 .btn:disabled,.btn[aria-disabled="true"]{opacity:.4;cursor:not-allowed;pointer-events:none;}
 
 body{margin:0;background:#F1EBE1;}
@@ -108,7 +108,12 @@ html[data-intro] .hero-ed-item { animation-play-state: paused; }
 /* Stop at the top/bottom instead of rubber-banding. */
 html, body { overscroll-behavior-y: none; }
 
-/* Home: category photos. Labels sit under the photos in text/secondary and darken with the photo's hover/focus. */
-.category-photo__label{color:var(--color-text-secondary);transition:color .4s ease;}
-.category-photo:hover .category-photo__label,.category-photo:focus-visible .category-photo__label{color:var(--color-text-primary);}
+/* Home: category photos. The label is a dark tag on the photo's top-left corner (above the hover dim). */
+.category-photo__label{position:absolute;left:0;top:0;padding:var(--space-4) var(--space-8);background:var(--color-bg-inverse);color:var(--color-text-inverse);white-space:nowrap;}
 .category-photo:focus-visible{outline-offset:4px;}
+/* Same hover as the hero: the hovered photo stays bright, the others dim. */
+.category-photo__dim{position:absolute;inset:0;background:#000;opacity:0;pointer-events:none;transition:opacity .4s ease;}
+@media (hover: hover) {
+  .category-photos:has(.category-photo:hover) .category-photo:not(:hover) .category-photo__dim{opacity:.5;}
+}
+.category-photos:has(.category-photo:focus-visible) .category-photo:not(:focus-visible) .category-photo__dim{opacity:.5;}

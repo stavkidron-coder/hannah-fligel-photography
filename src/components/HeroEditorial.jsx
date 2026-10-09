@@ -70,10 +70,10 @@ export default function HeroEditorial() {
       items.forEach((it) => { it.labelW = it.label.offsetWidth; });
       period = els[n].offsetLeft - els[0].offsetLeft;
 
-      // The logo animation plays over the scroll from the top of the page until the intro scene pins.
-      // If the next section is a pinned scene (data-scene) the logo finishes as that scene starts, otherwise when the section's bottom edge reaches the bottom of the viewport.
+      // The logo animation plays over the scroll from the top of the page until the next section's top edge reaches the top of the page.
       const next = wrap.current.nextElementSibling;
-      const nextEnd = !next ? 0 : next.dataset.scene ? next.getBoundingClientRect().top + window.scrollY : next.getBoundingClientRect().bottom + window.scrollY - vh;
+      const nr = next && next.getBoundingClientRect();
+      const nextEnd = !next ? 0 : nr.top + window.scrollY;
       wrap.current.dataset.logoStart = '0';
       wrap.current.dataset.logoEnd = String(Math.max(MIN_LOGO_PX, nextEnd));
       window.dispatchEvent(new Event('hero-editorial-layout'));
