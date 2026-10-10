@@ -8,9 +8,9 @@ import Button from './Button';
 // On hover the tag expands to list the specific kinds of session in that category. A photo opens Work filtered to that type.
 const WIDTHS = [600, 900, 1200];
 const categories = [
-  { label: 'families', cat: 'families', types: ['newborns', 'families'], src: cloudinaryUrl('galleries/families/baby-ollie/baby-ollie40', 900) },
-  { label: 'couples & individuals', cat: 'couples', types: ['portraits', 'couples', 'engagements', 'proposals', 'senior photos'], src: cloudinaryUrl('galleries/portraits/nandini-srikanth/NandiniANDSrikanth87', 900) },
-  { label: 'maternity', cat: 'maternity', types: ['expecting parents'], src: cloudinaryUrl('galleries/maternity/mana-chris/McClintock2026-94', 900) },
+  { label: 'families', cat: 'families', types: ['newborns', 'families'], src: cloudinaryUrl('galleries/families/bleil-family/SarahANDReid-Family2023-93', 900) },
+  { label: 'couples & individuals', cat: 'couples', types: ['portraits', 'couples', 'engagements', 'proposals', 'senior photos'], src: cloudinaryUrl('galleries/portraits/ashly-felipe/AshlyANDFelipe-engagement100-Compressed', 900) },
+  { label: 'maternity', cat: 'maternity', types: ['expecting parents'], src: cloudinaryUrl('galleries/maternity/mana-chris/McClintock2026-176', 900) },
 ];
 
 export default function CategoryPhotos() {
