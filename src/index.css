@@ -2,11 +2,11 @@
 :root{
   /* Color primitives */
   --color-warm-50:#FBF8F2; --color-warm-100:#FAF6EF; --color-warm-200:#F1EBE1; --color-warm-300:#DED1BF;
-  --color-warm-700:#6F6151; --color-warm-800:#5B5247; --color-warm-900:#2E2A24;
+  --color-warm-700:#6F6151; --color-warm-800:#5B5247; --color-warm-900:#2E2A24; --color-warm-950:#11100D;
   --color-red-50:#FBF0ED; --color-red-600:#9E3322; --color-red-800:#7E2A1B;
   /* Color semantic */
   --color-bg-page:var(--color-warm-200); --color-bg-surface:var(--color-warm-100);
-  --color-bg-inverse:var(--color-warm-900); --color-bg-inverse-hover:var(--color-warm-800);
+  --color-bg-inverse:var(--color-warm-900); --color-bg-inverse-hover:var(--color-warm-800); --color-bg-dark:var(--color-warm-950);
   --color-text-primary:var(--color-warm-900); --color-text-secondary:var(--color-warm-800);
   --color-text-tertiary:var(--color-warm-700); --color-text-inverse:var(--color-warm-100); --color-text-on-photo:var(--color-warm-50);
   --color-border-default:var(--color-warm-300); --color-border-strong:var(--color-warm-900);
@@ -108,8 +108,8 @@ html[data-intro] .hero-ed-item { animation-play-state: paused; }
 /* Stop at the top/bottom instead of rubber-banding. */
 html, body { overscroll-behavior-y: none; }
 
-/* Home: category photos. The label is a dark tag on the photo's top-left corner (above the hover dim). */
-.category-photo__label{position:absolute;left:0;top:0;padding:var(--space-4) var(--space-8);background:var(--color-bg-inverse);color:var(--color-text-inverse);white-space:nowrap;}
+/* Home: category photos. The label is a full-width dark bar above the photo. */
+.category-photo__label{display:block;width:100%;box-sizing:border-box;padding:var(--space-4) var(--space-8);background:var(--color-bg-dark);color:var(--color-text-inverse);white-space:nowrap;}
 .category-photo:focus-visible{outline-offset:4px;}
 /* Same hover as the hero: the hovered photo stays bright, the others dim. */
 .category-photo__dim{position:absolute;inset:0;background:#000;opacity:0;pointer-events:none;transition:opacity .4s ease;}
