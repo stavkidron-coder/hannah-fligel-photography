@@ -8,20 +8,21 @@ import { cloudinaryUrl } from '../lib/cloudinary';
 // Figma "Hero Images": a row of category photos with small labels above each.
 const LABEL_H = 19; // 15px label + 4px gap (space/4)
 const slides = [
-  { label: 'newborns', cat: 'families', src: cloudinaryUrl('galleries/families/dave-jasmin-lenny/Leon-Newborn-5-26-24-113', 1400), ratio: '1067 / 1600' },
-  { label: 'portraits', cat: 'couples', src: cloudinaryUrl('galleries/portraits/dana-josh/DanaANDJosh42', 1400), ratio: '1067 / 1600' },
+  // Landscape photos sit at 1, 4 and 7 so they are spread evenly through the loop.
   { label: 'couples', cat: 'couples', src: cloudinaryUrl('galleries/portraits/heidi-andre/HeidiANDAndre161', 1400), ratio: '1600 / 1067' },
+  { label: 'portraits', cat: 'couples', src: cloudinaryUrl('galleries/portraits/dana-josh/DanaANDJosh42', 1400), ratio: '1067 / 1600' },
   { label: 'maternity', cat: 'maternity', src: cloudinaryUrl('galleries/maternity/angelica-eric/AANDE-Maternity184', 1400), ratio: '1067 / 1600' },
+  { label: 'families', cat: 'families', src: cloudinaryUrl('galleries/families/madison-tanya-hunter/Madison_Tanya_Hunter_2025-08_313', 1400), ratio: '1600 / 1067' },
   { label: 'senior photos', cat: 'couples', src: cloudinaryUrl('galleries/portraits/emma-senior-photos/emma-senior-photos147', 1400), ratio: '1067 / 1600' },
   { label: 'proposals', cat: 'couples', src: cloudinaryUrl('galleries/portraits/jess-calen/JessANDCalen-proposal15', 1400), ratio: '1067 / 1600' },
-  { label: 'families', cat: 'families', src: cloudinaryUrl('galleries/families/madison-tanya-hunter/Madison_Tanya_Hunter_2025-08_381', 1400), ratio: '1067 / 1600' },
+  { label: 'newborns', cat: 'families', src: cloudinaryUrl('galleries/families/dave-jasmin-lenny/Leon-Newborn-5-26-24-28', 1400), ratio: '1600 / 1067' },
   { label: 'engagements', cat: 'couples', src: cloudinaryUrl('galleries/portraits/nandini-srikanth/NandiniANDSrikanth256', 1400), ratio: '1067 / 1600' },
 ];
 
 // The row drifts right to left on a loop. It is rendered COPIES times and wraps by exactly one set, so the loop is seamless.
 // Sideways wheel/trackpad input and Left/Right arrows nudge it along (or back) without touching the page scroll.
 // The hero is an ordinary section: it scrolls away with the page, and the nav logo animation plays on that scroll down to the intro.
-const SPEED = 60;       // px per second
+const SPEED = 80;       // px per second
 const COPIES = 3;        // enough that a set always covers the viewport, whatever its size
 const PHOTO_GAP = 0;     // px between photos (the Figma design has 20)
 const NUDGE_TAU = 120;   // ms; how quickly a nudge glides to rest
