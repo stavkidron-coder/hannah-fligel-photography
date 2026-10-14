@@ -6,7 +6,6 @@ import { smoothY, subscribeSmoothScroll } from '../lib/smoothScroll';
 // Everything scales from the Figma frame (1748px wide): 110px nav height = 6.29vw, 64px wordmark = 3.66vw.
 export const NAV_EDITORIAL_H = 'max(72px,6.29vw)';
 const PAD_Y = 'max(12px,.97vw)';
-const FINAL_H = `calc(2 * ${PAD_Y} + 36px)`; // logo height plus the same padding above and below
 
 // End state: the 60x36 logo box with H, F and P in a straight line. Letter centres are measured from the box's top-left.
 const LOGO_W = 60, LOGO_H = 36; // a rectangle that hugs the line of letters
@@ -16,9 +15,7 @@ const LOGO_FONT = 22;
 const TARGET = { h: [14.07, 18.2], f: [31.85, 18.2], p: [48.97, 18.2] };
 
 // Scroll timeline (0 = top of page, 1 = hero scrolled out from under the nav).
-// Once scrolled, the cream gradient behind the nav stretches to this many times the nav's height so content fades out slowly beneath it
-// (at the top of the page it stays nav-height so the hero photos start crisp).
-const FADE_LENGTH = 1.9;
+// The nav is a solid cream bar that hugs the logo: padding above and below the logo button, so it shrinks as the wordmark collapses.
 const FADE_END = 0.25, MOVE_END = 0.65;
 
 const clamp01 = (v) => Math.min(1, Math.max(0, v));
@@ -83,7 +80,7 @@ export default function NavEditorial() {
       btn.current.style.height = `${lerp(g.h, LOGO_H, e)}px`;
       box.current.style.opacity = String(b);
       outline.current.style.strokeDashoffset = String(1 - b);
-      bg.current.style.height = `calc((${NAV_EDITORIAL_H} + (${FINAL_H} - ${NAV_EDITORIAL_H}) * ${ease(p)}) * ${lerp(1, FADE_LENGTH, ease(p))})`;
+      bg.current.style.height = `calc(2 * ${PAD_Y} + ${lerp(g.h, LOGO_H, e)}px)`;
     };
 
     const remeasure = () => { measure(); apply(); };
@@ -101,7 +98,7 @@ export default function NavEditorial() {
 
   return (
     <nav style={css(`position:sticky;top:0;z-index:50;height:${NAV_EDITORIAL_H};box-sizing:border-box;display:flex;align-items:flex-start;justify-content:space-between;padding:${PAD_Y} var(--layout-page-margin) 0;pointer-events:none;`)}>
-      <div ref={bg} aria-hidden="true" style={css(`position:absolute;top:0;left:0;right:0;background:linear-gradient(to bottom,#F1EBE1 0%,rgba(241,235,225,.94) 20%,rgba(241,235,225,.75) 40%,rgba(241,235,225,.45) 60%,rgba(241,235,225,.18) 80%,rgba(241,235,225,0) 100%);`)}></div>
+      <div ref={bg} aria-hidden="true" style={css(`position:absolute;top:0;left:0;right:0;background:#F1EBE1;`)}></div>
       <button ref={btn} onClick={() => go('home')} aria-label="Hannah Fligel Photography – Home" style={css(`position:relative;flex:none;pointer-events:auto;background:none;border:none;padding:0;cursor:pointer;color:${ink};font-size:max(26px,3.66vw);`)}>
         <span ref={box} aria-hidden="true" style={css(`position:absolute;left:0;top:0;width:${LOGO_W}px;height:${LOGO_H}px;box-sizing:border-box;opacity:0;backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);background:rgba(255,255,255,0.01);box-shadow:0 0 60px 30px rgba(250,246,239,0.3);`)}></span>
         <svg aria-hidden="true" width={LOGO_W} height={LOGO_H} viewBox={`0 0 ${LOGO_W} ${LOGO_H}`} style={css(`position:absolute;left:0;top:0;overflow:visible;`)}>
