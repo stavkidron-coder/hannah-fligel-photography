@@ -80,7 +80,7 @@ export default function CategoryPhotos() {
         </div>
         <Button variant="text" className="category-photos__all" onClick={() => go('work')}>View all galleries →</Button>
       </div>
-      <div ref={grid} className="category-photos" style={css(`display:grid;grid-template-columns:repeat(${cols},minmax(0,1fr));gap:var(--layout-media-margin);`)}>
+      <div ref={grid} className="category-photos" style={css(`display:grid;grid-template-columns:repeat(${cols},minmax(0,1fr));gap:var(--layout-media-margin);${width > 680 ? '' : 'margin:0 calc(-1 * var(--layout-media-margin));'}`)}>
         {categories.map((c) => (
           <button key={c.cat} className="category-photo" onClick={() => open(c.cat)} aria-label={`View ${c.label} work`}
             style={css(`position:relative;display:block;background:none;border:none;padding:0;cursor:pointer;text-align:left;`)}>

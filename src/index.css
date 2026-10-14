@@ -136,11 +136,9 @@ html, body { overscroll-behavior-y: none; }
 .hero-carousel-strip { scrollbar-width: none; }
 .hero-carousel-strip::-webkit-scrollbar { display: none; }
 
-/* Phones: the intro's two buttons sit side by side; the text button drops its side padding (and underline inset) to make room. */
+/* Phones: the intro's buttons stack, Learn more keeps its default padding so its label lines up with the See the work label. */
 @media (max-width:680px){
-  .intro-actions{align-self:stretch;justify-content:space-between;gap:var(--space-8) !important;} /* still wraps below ~340px */
-  .intro-actions .btn--text{padding-left:var(--space-8);padding-right:var(--space-8);margin-right:calc(var(--space-8) * -1);} /* the label's right edge lands on the page margin */
-  .intro-actions .btn--text::after{left:var(--space-8);right:var(--space-8);}
+  .intro-actions{flex-direction:column;align-items:flex-start !important;gap:var(--space-16) !important;} /* Learn more sits under See the work */
 }
 
 /* Phones: the pricing prompt under the quote lines up with the left page margin. */
