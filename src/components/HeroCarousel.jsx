@@ -68,12 +68,14 @@ export default function HeroCarousel() {
 
   useLayoutEffect(() => {
     const st = s.current;
-    const measure = () => { st.w = frame.current.clientWidth; st.x = st.idx * st.w; render(); };
+    // Fractional width on purpose: clientWidth rounds, and the error piles up with every slide.
+    const measure = () => { st.w = frame.current.getBoundingClientRect().width; st.x = st.idx * st.w; render(); };
     measure();
-    window.addEventListener('resize', measure);
+    const ro = 'ResizeObserver' in window ? new ResizeObserver(measure) : null;
+    if (ro) ro.observe(frame.current); else window.addEventListener('resize', measure);
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { labelW.current.clear(); render(); });
     schedule();
-    return () => { window.removeEventListener('resize', measure); stop(); };
+    return () => { if (ro) ro.disconnect(); else window.removeEventListener('resize', measure); stop(); };
   }, []);
   useLayoutEffect(render, [idx]);
 
