@@ -15,8 +15,6 @@ export default function Home() {
   const isDesktop = width > 680;
   const navInvest = () => go('pricing'), navWork = () => go('work'), navAbout = () => go('about');
 
-  const testimonial = testimonialsData[activeTestimonialIndex];
-
   return (
     <main id="main">
       {isDesktop ? (
@@ -36,11 +34,16 @@ export default function Home() {
       <CategoryPhotos />
 
       <section style={css(`display:flex;flex-wrap:wrap;gap:var(--space-40) var(--space-64);align-items:center;justify-content:space-between;padding:var(--space-64) var(--layout-page-margin);`)}>
-        <div style={css(`flex:1 1 420px;max-width:683px;display:flex;flex-direction:column;justify-content:center;min-height:175px;gap:var(--space-32);opacity:${testimonialFading ? 0 : 1};transition:opacity 1.4s ease-in-out;`)}>
-          <p className="t-quote-lg">{testimonial.quote}</p>
-          <p className="t-caption" style={css(`text-align:right;color:var(--color-text-tertiary);`)}>— <strong style={css(`font-weight:600;color:var(--color-text-primary);`)}>{testimonial.name}</strong> | {testimonial.detail}</p>
+        {/* Every quote sits in the same grid cell, so the block is always as tall as the longest one and nothing below it moves when the quote changes. */}
+        <div style={css(`flex:1 1 420px;max-width:683px;display:grid;opacity:${testimonialFading ? 0 : 1};transition:opacity 1.4s ease-in-out;`)}>
+          {testimonialsData.map((t, i) => (
+            <div key={i} aria-hidden={i === activeTestimonialIndex ? undefined : 'true'} style={css(`grid-area:1 / 1;display:flex;flex-direction:column;justify-content:center;gap:var(--space-32);visibility:${i === activeTestimonialIndex ? 'visible' : 'hidden'};`)}>
+              <p className="t-quote-lg">{t.quote}</p>
+              <p className="t-caption" style={css(`text-align:right;color:var(--color-text-tertiary);`)}>— <strong style={css(`font-weight:600;color:var(--color-text-primary);`)}>{t.name}</strong> | {t.detail}</p>
+            </div>
+          ))}
         </div>
-        <div style={css(`display:flex;flex-direction:column;align-items:flex-end;gap:var(--space-24);`)}>
+        <div className="pricing-cta" style={css(`display:flex;flex-direction:column;align-items:flex-end;gap:var(--space-24);`)}>
           <p className="t-h3" style={css(`color:var(--color-text-secondary);`)}>Curious about working together?</p>
           <Button variant="primary" onClick={navInvest}>View pricing →</Button>
         </div>

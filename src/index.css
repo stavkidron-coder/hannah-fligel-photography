@@ -142,3 +142,6 @@ html, body { overscroll-behavior-y: none; }
   .intro-actions .btn--text{padding-left:var(--space-8);padding-right:var(--space-8);margin-right:calc(var(--space-8) * -1);} /* the label's right edge lands on the page margin */
   .intro-actions .btn--text::after{left:var(--space-8);right:var(--space-8);}
 }
+
+/* Phones: the pricing prompt under the quote lines up with the left page margin. */
+@media (max-width:680px){ .pricing-cta{align-items:flex-start !important;} }
