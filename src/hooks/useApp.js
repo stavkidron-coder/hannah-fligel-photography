@@ -98,7 +98,8 @@ export function useApp() {
       document.body.style.overflow = 'hidden';
     } catch (e) {}
     try {
-      inerted.current = Array.prototype.slice.call(document.querySelectorAll('nav, main, footer'));
+      // The top bar stays live: on phones it holds the close (X) button, and the menu's own link list is a <nav> too.
+      inerted.current = Array.prototype.slice.call(document.querySelectorAll('main, footer'));
       inerted.current.forEach((n) => { n.inert = true; n.setAttribute('aria-hidden', 'true'); });
     } catch (e) { inerted.current = []; }
     let tries = 0;
