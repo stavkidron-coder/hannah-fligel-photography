@@ -2,22 +2,12 @@ import { useContext, useLayoutEffect, useRef } from 'react';
 import { AppContext } from '../hooks/useApp';
 import { css } from '../lib/css';
 import { NAV_EDITORIAL_H } from './NavEditorial';
-import { cloudinaryUrl } from '../lib/cloudinary';
+import { heroPhotos } from '../data/heroPhotos';
 
 // Each photo opens Work pre-filtered; the Work page only has Families / Maternity / Couples tabs, so portraits and engagements land on Couples.
 // Figma "Hero Images": a row of category photos with small labels above each.
 const LABEL_H = 19; // 15px label + 4px gap (space/4)
-const slides = [
-  // Landscape photos sit at 1, 4 and 7 so they are spread evenly through the loop.
-  { label: 'couples', cat: 'couples', src: cloudinaryUrl('galleries/portraits/heidi-andre/HeidiANDAndre161', 1400), ratio: '1600 / 1067' },
-  { label: 'portraits', cat: 'couples', src: cloudinaryUrl('galleries/portraits/dana-josh/DanaANDJosh42', 1400), ratio: '1067 / 1600' },
-  { label: 'maternity', cat: 'maternity', src: cloudinaryUrl('galleries/maternity/angelica-eric/AANDE-Maternity184', 1400), ratio: '1067 / 1600' },
-  { label: 'families', cat: 'families', src: cloudinaryUrl('galleries/families/madison-tanya-hunter/Madison_Tanya_Hunter_2025-08_313', 1400), ratio: '1600 / 1067' },
-  { label: 'senior photos', cat: 'couples', src: cloudinaryUrl('galleries/portraits/emma-senior-photos/emma-senior-photos147', 1400), ratio: '1067 / 1600' },
-  { label: 'proposals', cat: 'couples', src: cloudinaryUrl('galleries/portraits/jess-calen/JessANDCalen-proposal15', 1400), ratio: '1067 / 1600' },
-  { label: 'newborns', cat: 'families', src: cloudinaryUrl('galleries/families/dave-jasmin-lenny/Leon-Newborn-5-26-24-28', 1400), ratio: '1600 / 1067' },
-  { label: 'engagements', cat: 'couples', src: cloudinaryUrl('galleries/portraits/nandini-srikanth/NandiniANDSrikanth256', 1400), ratio: '1067 / 1600' },
-];
+const slides = heroPhotos;
 
 // The row drifts right to left on a loop. It is rendered COPIES times and wraps by exactly one set, so the loop is seamless.
 // Sideways wheel/trackpad input and Left/Right arrows nudge it along (or back) without touching the page scroll.

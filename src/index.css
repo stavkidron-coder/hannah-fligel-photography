@@ -131,3 +131,7 @@ html, body { overscroll-behavior-y: none; }
   .category-photos__all{padding-left:var(--space-8);padding-right:var(--space-8);}
   .category-photos__all::after{left:var(--space-8);right:var(--space-8);}
 }
+
+/* Phone hero carousel: the swipe strip has no visible scrollbar. */
+.hero-carousel-strip { scrollbar-width: none; }
+.hero-carousel-strip::-webkit-scrollbar { display: none; }
