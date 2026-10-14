@@ -9,7 +9,6 @@ const PAD_Y = 'max(12px,.97vw)';
 // Phones (<= 680px, Figma "Nav / Mobile"): a 56px bar, 10px above and below the 36px logo, with a hamburger on the right.
 export const NAV_PHONE_H = '56px';
 const PHONE_PAD_Y = '10px';
-const PHONE_COLLAPSE_PX = 96; // scroll distance over which the wordmark collapses into the logo
 
 // End state: the 60x36 logo box with H, F and P in a straight line. Letter centres are measured from the box's top-left.
 const LOGO_W = 60, LOGO_H = 36; // a rectangle that hugs the line of letters
@@ -27,7 +26,7 @@ const ease = (t) => t * t * (3 - 2 * t);
 const lerp = (a, b, t) => a + (b - a) * t;
 
 // Nav for the editorial design (Figma "Nav", node 31:397; phones: "Nav / Mobile"). On Home the "Hannah Fligel photography"
-// wordmark collapses into the HFP logo once the hero photos have turned to dust (on phones: after a short scroll); elsewhere the finished logo shows.
+// wordmark collapses into the HFP logo once the hero photos have turned to dust; elsewhere (and always on phones) the finished logo shows.
 export default function NavEditorial() {
   const { page, go, width, menuOpen, toggleMenu, menuButton } = useContext(AppContext);
   const links = [['Home', 'home'], ['Work', 'work'], ['About', 'about'], ['Pricing', 'pricing'], ['Contact', 'contact']];
@@ -61,10 +60,7 @@ export default function NavEditorial() {
 
     // The hero publishes where (in page scroll) the logo animation starts and ends: after its photos have turned to dust.
     const progress = () => {
-      if (isPhone) {
-        if (!isHome || menuOpen) return 1; // the open menu always shows the finished logo
-        return clamp01(smoothY() / PHONE_COLLAPSE_PX);
-      }
+      if (isPhone) return 1; // phones always show the finished logo, no wordmark and no transition
       if (!isHome) return 1;
       const hero = document.getElementById('hero-editorial');
       if (!hero) return 1;
@@ -101,7 +97,7 @@ export default function NavEditorial() {
     window.addEventListener('resize', remeasure);
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(remeasure);
     return () => { unsub(); window.removeEventListener('hero-editorial-layout', apply); window.removeEventListener('resize', remeasure); };
-  }, [isHome, isPhone, menuOpen]);
+  }, [isHome, isPhone]);
 
   const ink = 'var(--ink)';
   const letter = css(`display:inline-block;transform-origin:center;will-change:transform;`);
