@@ -3,7 +3,7 @@ import { inboxEmail, web3formsKey, formEndpoint } from '../config';
 
 const EMPTY_VALUES = { name: '', email: '', sessionType: '', date: '', message: '' };
 
-const baseFieldStyle = "border: none; border-bottom: 1px solid var(--line); background: transparent; padding: 8px 0; font-size: 19px; color: var(--ink); outline: none; border-radius: 6px; border-style: solid; border-width: 1px; padding-left: 8px; padding-right: 8px;";
+const baseFieldStyle = "border: none; border-bottom: 1px solid var(--color-border-default); background: transparent; padding: 8px 0; font-family: var(--font-sans); font-size: 18px; color: var(--color-text-primary); outline: none; border-radius: var(--radius-md); border-style: solid; border-width: 1px; padding-left: 8px; padding-right: 8px;";
 
 function validate(values) {
   const errors = {};
@@ -23,7 +23,7 @@ export function useContactForm() {
   });
   const patch = (p) => setState((s) => ({ ...s, ...(typeof p === 'function' ? p(s) : p) }));
 
-  const fieldStyle = (key) => baseFieldStyle + (state.formErrors[key] ? 'border-color: #a03a28;' : 'border-color: #8A7F70;');
+  const fieldStyle = (key) => baseFieldStyle + (state.formErrors[key] ? 'border-color: var(--color-feedback-error);' : 'border-color: var(--color-text-tertiary);');
 
   const onFieldChange = (key, val) => {
     patch((s) => {
