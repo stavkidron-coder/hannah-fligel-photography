@@ -40,6 +40,37 @@ export default function CategoryPhotos() {
     return () => window.removeEventListener('resize', measure);
   }, []);
 
+  // Touch devices have no hover, so a photo that is (nearly) fully on screen opens its tag as if it were hovered: data-inview, styled in index.css.
+  // The 56px phone nav covers the top of the viewport. One photo at a time (the one nearest the centre); it closes the moment it leaves, and
+  // opens after a short settle so a fast fling-scroll doesn't strobe the tags.
+  useEffect(() => {
+    if (!window.matchMedia || !window.matchMedia('(hover: none)').matches || !('IntersectionObserver' in window)) return;
+    const cards = [...grid.current.querySelectorAll('.category-photo')];
+    const ratios = new Map(cards.map((c) => [c, 0]));
+    let shown = null, timer = 0;
+    const show = (el) => { cards.forEach((c) => { if (c === el) c.setAttribute('data-inview', ''); else c.removeAttribute('data-inview'); }); shown = el; };
+    const evaluate = () => {
+      const mid = (window.innerHeight + 56) / 2;
+      let best = null, bestD = Infinity;
+      cards.forEach((c) => {
+        if (ratios.get(c) < 0.9) return;
+        const r = c.getBoundingClientRect();
+        const d = Math.abs((r.top + r.bottom) / 2 - mid);
+        if (d < bestD) { best = c; bestD = d; }
+      });
+      if (best === shown) { clearTimeout(timer); return; }
+      clearTimeout(timer);
+      if (shown) show(null);
+      if (best) timer = setTimeout(() => show(best), 150);
+    };
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => ratios.set(e.target, e.intersectionRatio));
+      evaluate();
+    }, { threshold: [0, 0.25, 0.5, 0.75, 0.9, 0.95, 1], rootMargin: '-56px 0px 0px 0px' });
+    cards.forEach((c) => io.observe(c));
+    return () => { io.disconnect(); clearTimeout(timer); cards.forEach((c) => c.removeAttribute('data-inview')); };
+  }, []);
+
   return (
     <section aria-labelledby="session-types-heading" style={css(`padding:var(--space-40) var(--layout-media-margin);display:flex;flex-direction:column;gap:var(--space-12);`)}>
       <div style={css(`display:flex;align-items:center;justify-content:space-between;gap:var(--space-16);`)}>
