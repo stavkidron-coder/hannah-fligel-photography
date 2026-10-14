@@ -135,3 +135,10 @@ html, body { overscroll-behavior-y: none; }
 /* Phone hero carousel: the swipe strip has no visible scrollbar. */
 .hero-carousel-strip { scrollbar-width: none; }
 .hero-carousel-strip::-webkit-scrollbar { display: none; }
+
+/* Phones: the intro's two buttons sit side by side; the text button drops its side padding (and underline inset) to make room. */
+@media (max-width:680px){
+  .intro-actions{gap:var(--space-8) !important;} /* still wraps below ~340px */
+  .intro-actions .btn--text{padding-left:var(--space-8);padding-right:var(--space-8);}
+  .intro-actions .btn--text::after{left:var(--space-8);right:var(--space-8);}
+}
