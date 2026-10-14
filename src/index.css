@@ -125,3 +125,9 @@ html, body { overscroll-behavior-y: none; }
   .category-photos:has(.category-photo:hover) .category-photo:not(:hover) .category-photo__dim{opacity:.5;}
 }
 .category-photos:has(.category-photo:focus-visible) .category-photo:not(:focus-visible) .category-photo__dim{opacity:.5;}
+
+/* Phones: trim the "View all galleries" button's side padding (and its underline to match) so the "session types" heading beside it stays on one line. */
+@media (max-width:680px){
+  .category-photos__all{padding-left:var(--space-8);padding-right:var(--space-8);}
+  .category-photos__all::after{left:var(--space-8);right:var(--space-8);}
+}

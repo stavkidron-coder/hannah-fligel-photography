@@ -43,11 +43,11 @@ export default function CategoryPhotos() {
   return (
     <section aria-labelledby="session-types-heading" style={css(`padding:var(--space-40) var(--layout-media-margin);display:flex;flex-direction:column;gap:var(--space-12);`)}>
       <div style={css(`display:flex;align-items:center;justify-content:space-between;gap:var(--space-16);`)}>
-        <div style={css(`display:flex;align-items:center;gap:var(--space-8);`)}>
+        <div style={css(`display:flex;align-items:center;gap:var(--space-8);flex:none;white-space:nowrap;`)}>
           <span aria-hidden="true" style={css(`width:6px;height:6px;border-radius:50%;background:var(--color-text-primary);flex:none;`)}></span>
           <h2 id="session-types-heading" className="t-body" style={css(`font-weight:400;`)}>session types</h2>
         </div>
-        <Button variant="text" onClick={() => go('work')}>View all galleries →</Button>
+        <Button variant="text" className="category-photos__all" onClick={() => go('work')}>View all galleries →</Button>
       </div>
       <div ref={grid} className="category-photos" style={css(`display:grid;grid-template-columns:repeat(${cols},minmax(0,1fr));gap:var(--layout-media-margin);`)}>
         {categories.map((c) => (
