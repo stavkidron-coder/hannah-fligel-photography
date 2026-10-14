@@ -132,10 +132,6 @@ html, body { overscroll-behavior-y: none; }
   .category-photos__all::after{left:var(--space-8);right:var(--space-8);}
 }
 
-/* Phone hero carousel: the swipe strip has no visible scrollbar. */
-.hero-carousel-strip { scrollbar-width: none; }
-.hero-carousel-strip::-webkit-scrollbar { display: none; }
-
 /* Phones: the intro's buttons stack, Learn more keeps its default padding so its label lines up with the See the work label. */
 @media (max-width:680px){
   .intro-actions{flex-direction:column;align-items:flex-start !important;gap:var(--space-16) !important;} /* Learn more sits under See the work */
@@ -143,3 +139,7 @@ html, body { overscroll-behavior-y: none; }
 
 /* Phones: the pricing prompt under the quote lines up with the left page margin. */
 @media (max-width:680px){ .pricing-cta{align-items:flex-start !important;} }
+
+/* Phone hero bars: the current bar's fill slides in and out in step with the photo slide (easeInOutSine, same 600ms). */
+.hero-bar-fill{transition:transform .6s cubic-bezier(.37,0,.63,1);}
+@media (prefers-reduced-motion: reduce){ .hero-bar-fill{transition:none;} }
