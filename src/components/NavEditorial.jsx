@@ -6,6 +6,10 @@ import { smoothY, subscribeSmoothScroll } from '../lib/smoothScroll';
 // Everything scales from the Figma frame (1748px wide): 110px nav height = 6.29vw, 64px wordmark = 3.66vw.
 export const NAV_EDITORIAL_H = 'max(72px,6.29vw)';
 const PAD_Y = 'max(12px,.97vw)';
+// Phones (<= 680px, Figma "Nav / Mobile"): a 56px bar, 10px above and below the 36px logo, with a hamburger on the right.
+export const NAV_PHONE_H = '56px';
+const PHONE_PAD_Y = '10px';
+const PHONE_COLLAPSE_PX = 96; // scroll distance over which the wordmark collapses into the logo
 
 // End state: the 60x36 logo box with H, F and P in a straight line. Letter centres are measured from the box's top-left.
 const LOGO_W = 60, LOGO_H = 36; // a rectangle that hugs the line of letters
@@ -22,12 +26,15 @@ const clamp01 = (v) => Math.min(1, Math.max(0, v));
 const ease = (t) => t * t * (3 - 2 * t);
 const lerp = (a, b, t) => a + (b - a) * t;
 
-// Desktop nav for the editorial design (Figma "Nav", node 31:397). On Home the "Hannah Fligel photography"
-// wordmark collapses into the HFP logo once the hero photos have turned to dust; elsewhere the finished logo shows.
+// Nav for the editorial design (Figma "Nav", node 31:397; phones: "Nav / Mobile"). On Home the "Hannah Fligel photography"
+// wordmark collapses into the HFP logo once the hero photos have turned to dust (on phones: after a short scroll); elsewhere the finished logo shows.
 export default function NavEditorial() {
-  const { page, go } = useContext(AppContext);
+  const { page, go, width, menuOpen, toggleMenu, menuButton } = useContext(AppContext);
   const links = [['Home', 'home'], ['Work', 'work'], ['About', 'about'], ['Pricing', 'pricing'], ['Contact', 'contact']];
   const isHome = page === 'home';
+  const isPhone = width <= 680;
+  const navH = isPhone ? NAV_PHONE_H : NAV_EDITORIAL_H;
+  const padY = isPhone ? PHONE_PAD_Y : PAD_Y;
 
   const btn = useRef(null), word = useRef(null), bg = useRef(null);
   const hEl = useRef(null), fEl = useRef(null), pEl = useRef(null);
@@ -54,6 +61,10 @@ export default function NavEditorial() {
 
     // The hero publishes where (in page scroll) the logo animation starts and ends: after its photos have turned to dust.
     const progress = () => {
+      if (isPhone) {
+        if (!isHome || menuOpen) return 1; // the open menu always shows the finished logo
+        return clamp01(smoothY() / PHONE_COLLAPSE_PX);
+      }
       if (!isHome) return 1;
       const hero = document.getElementById('hero-editorial');
       if (!hero) return 1;
@@ -80,7 +91,7 @@ export default function NavEditorial() {
       btn.current.style.height = `${lerp(g.h, LOGO_H, e)}px`;
       box.current.style.opacity = String(b);
       outline.current.style.strokeDashoffset = String(1 - b);
-      bg.current.style.height = `calc(2 * ${PAD_Y} + ${lerp(g.h, LOGO_H, e)}px)`;
+      bg.current.style.height = `calc(2 * ${padY} + ${lerp(g.h, LOGO_H, e)}px)`;
     };
 
     const remeasure = () => { measure(); apply(); };
@@ -90,14 +101,14 @@ export default function NavEditorial() {
     window.addEventListener('resize', remeasure);
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(remeasure);
     return () => { unsub(); window.removeEventListener('hero-editorial-layout', apply); window.removeEventListener('resize', remeasure); };
-  }, [isHome]);
+  }, [isHome, isPhone, menuOpen]);
 
   const ink = 'var(--ink)';
   const letter = css(`display:inline-block;transform-origin:center;will-change:transform;`);
   const setFade = (i) => (el) => { fades.current[i] = el; };
 
   return (
-    <nav style={css(`position:sticky;top:0;z-index:50;height:${NAV_EDITORIAL_H};box-sizing:border-box;display:flex;align-items:flex-start;justify-content:space-between;padding:${PAD_Y} var(--layout-page-margin) 0;pointer-events:none;`)}>
+    <nav style={css(`position:sticky;top:0;z-index:${isPhone && menuOpen ? 70 : 50};height:${navH};box-sizing:border-box;display:flex;align-items:flex-start;justify-content:space-between;padding:${padY} var(--layout-page-margin) 0;pointer-events:none;`)}>
       <div ref={bg} aria-hidden="true" style={css(`position:absolute;top:0;left:0;right:0;background:#F1EBE1;`)}></div>
       <button ref={btn} onClick={() => go('home')} aria-label="Hannah Fligel Photography – Home" style={css(`position:relative;flex:none;pointer-events:auto;background:none;border:none;padding:0;cursor:pointer;color:${ink};font-size:max(26px,3.66vw);`)}>
         <span ref={box} aria-hidden="true" style={css(`position:absolute;left:0;top:0;width:${LOGO_W}px;height:${LOGO_H}px;box-sizing:border-box;opacity:0;backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);background:rgba(255,255,255,0.01);box-shadow:0 0 60px 30px rgba(250,246,239,0.3);`)}></span>
@@ -114,11 +125,19 @@ export default function NavEditorial() {
           </span>
         </span>
       </button>
+      {isPhone ? (
+        <button ref={menuButton} onClick={toggleMenu} aria-label={menuOpen ? 'Close menu' : 'Open menu'} aria-haspopup="dialog" aria-controls="mobile-menu" aria-expanded={menuOpen} style={css(`position:relative;flex:none;pointer-events:auto;align-self:flex-start;margin-top:-4px;width:44px;height:44px;padding:0 0 0 20px;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:flex-end;color:${ink};`)}>
+          <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <path d={menuOpen ? 'M5 5L19 19M19 5L5 19' : 'M3 7H21M3 12H21M3 17H21'}></path>
+          </svg>
+        </button>
+      ) : (
       <div style={css(`position:relative;pointer-events:auto;display:flex;align-items:center;gap:clamp(16px,2.3vw,var(--space-40));`)}>
         {links.map(([label, key]) => (
           <button key={key} className="nav-editorial-link t-label" onClick={() => go(key)} aria-current={page === key ? 'page' : undefined} style={css(`background:none;border:none;cursor:pointer;padding:8px 0;position:relative;`)}>{label}<span aria-hidden="true" className="nav-editorial-line"></span></button>
         ))}
       </div>
+      )}
     </nav>
   );
 }

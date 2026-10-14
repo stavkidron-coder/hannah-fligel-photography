@@ -17,10 +17,5 @@ export function layoutFor(width) {
     pricingGridGap: isMobile ? '48px' : 'clamp(18px,2.6vw,28px)',
     pricingNoteGap: isMobile ? '20px' : '4px',
     pricingNoteGap2: isMobile ? '28px' : '16px',
-    navLinkMobile: {
-      background: 'none', border: 'none', cursor: 'pointer', padding: '14px 0',
-      fontFamily: "'Cormorant Garamond',serif", fontWeight: 400, fontSize: '30px',
-      color: '#FBF8F2', width: '100%', textAlign: 'center',
-    },
   };
 }

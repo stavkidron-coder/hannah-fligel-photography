@@ -2,7 +2,6 @@ import { Route, Routes } from 'react-router-dom';
 import { AppContext, useApp } from './hooks/useApp';
 import { css } from './lib/css';
 import { pathFor } from './lib/routes';
-import Nav from './components/Nav';
 import NavEditorial from './components/NavEditorial';
 import MobileMenu from './components/MobileMenu';
 import Footer from './components/Footer';
@@ -26,7 +25,7 @@ export default function App() {
 
         <a href="#main" className="skip-link">Skip to content</a>
 
-        {app.width > 680 ? <NavEditorial /> : <Nav />}
+        <NavEditorial />
         <MobileMenu />
 
         <Routes location={location}>
