@@ -16,7 +16,8 @@ const categories = [
 export default function CategoryPhotos() {
   const { setCat, go, width } = useContext(AppContext);
   const open = (cat) => { setCat(cat); try { window.scrollTo(0, 0); } catch (e) {} };
-  const cols = width > 680 ? 3 : 1;
+  const phone = width <= 680;
+  const cols = phone ? 1 : 3;
   // The card under the pointer (or focus) shows its alternate photo; every other card shows its cover.
   // The tag hugs its label at rest and widens on hover only if a bullet is wider than the label. Both widths are measured here
   // and exposed as --w0 (resting) and --w1 (open) so the width can be transitioned.
@@ -40,11 +41,11 @@ export default function CategoryPhotos() {
     return () => window.removeEventListener('resize', measure);
   }, []);
 
-  // Touch devices have no hover, so a photo that is (nearly) fully on screen opens its tag as if it were hovered: data-inview, styled in index.css.
+  // Touch devices have no hover, and neither does the one-column phone layout when it is viewed in a narrow desktop window, so a photo that is (nearly) fully on screen opens its tag as if it were hovered: data-inview, styled in index.css.
   // The 56px phone nav covers the top of the viewport. One photo at a time (the one nearest the centre); it closes the moment it leaves, and
   // opens after a short settle so a fast fling-scroll doesn't strobe the tags.
   useEffect(() => {
-    if (!window.matchMedia || !window.matchMedia('(hover: none)').matches || !('IntersectionObserver' in window)) return;
+    if (!(phone || (window.matchMedia && window.matchMedia('(hover: none)').matches)) || !('IntersectionObserver' in window)) return;
     const cards = [...grid.current.querySelectorAll('.category-photo')];
     const ratios = new Map(cards.map((c) => [c, 0]));
     let shown = null, timer = 0;
@@ -69,7 +70,7 @@ export default function CategoryPhotos() {
     }, { threshold: [0, 0.25, 0.5, 0.75, 0.9, 0.95, 1], rootMargin: '-56px 0px 0px 0px' });
     cards.forEach((c) => io.observe(c));
     return () => { io.disconnect(); clearTimeout(timer); cards.forEach((c) => c.removeAttribute('data-inview')); };
-  }, []);
+  }, [phone]);
 
   return (
     <section aria-labelledby="session-types-heading" style={css(`padding:var(--space-40) var(--layout-media-margin);display:flex;flex-direction:column;gap:var(--space-12);`)}>
