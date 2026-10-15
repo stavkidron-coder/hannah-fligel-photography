@@ -10,12 +10,12 @@ export default function About() {
   const para = css(`margin:0 0 var(--space-24);color:var(--color-text-secondary);`);
   return (
     <main id="main">
-      <div style={css(`max-width:680px;margin:0 auto;padding:clamp(48px,7vw,72px) var(--space-32) 0;`)}>
+      <div style={css(`max-width:680px;margin:0 auto;padding:clamp(48px,7vw,72px) var(--layout-page-margin) 0;`)}>
         <div style={css(`position:relative;width:100%;aspect-ratio:1/1;overflow:hidden;background:var(--color-bg-surface);`)}>
           <img src={cloudinaryFromLocal('/images/About/hannah-portrait.jpg', 1400)} alt="Portrait of Hannah Fligel" style={css(`width: 100%; height: 100%; object-fit: cover; border-radius: 3px`)} />
         </div>
       </div>
-      <div style={css(`max-width:680px;margin:0 auto;padding:clamp(40px,6vw,56px) var(--space-32) clamp(80px,11vw,128px);`)}>
+      <div style={css(`max-width:680px;margin:0 auto;padding:clamp(40px,6vw,56px) var(--layout-page-margin) clamp(80px,11vw,128px);`)}>
         <h1 className="t-h1">Hannah Fligel</h1>
         <p className="t-label" style={css(`margin:var(--space-8) 0 clamp(40px,5vw,56px);color:var(--color-text-tertiary);`)}>Portrait &amp; lifestyle photographer</p>
 

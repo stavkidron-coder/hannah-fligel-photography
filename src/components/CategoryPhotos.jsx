@@ -1,11 +1,11 @@
-import { useContext, useEffect, useRef } from 'react';
+import { useContext } from 'react';
 import { AppContext } from '../hooks/useApp';
 import { css } from '../lib/css';
 import { cloudinaryUrl, cloudinarySrcSet } from '../lib/cloudinary';
 import Button from './Button';
 
-// Figma "Categories": a "session types" heading with a link to all work, then one portrait photo per session type with its label as a dark tag on the photo's top-left corner.
-// On hover the tag expands to list the specific kinds of session in that category. A photo opens Work filtered to that type.
+// Figma "Categories": a "session types" heading with a link to all work, then one portrait photo per session type with its label underneath.
+// The name and its session types sit under each photo. A photo opens Work filtered to that type.
 const WIDTHS = [600, 900, 1200];
 const categories = [
   { label: 'families', cat: 'families', types: ['newborns', 'families'], src: cloudinaryUrl('galleries/families/bleil-family/SarahANDReid-Family2023-93', 900) },
@@ -17,86 +17,32 @@ export default function CategoryPhotos() {
   const { setCat, go, width } = useContext(AppContext);
   const open = (cat) => { setCat(cat); try { window.scrollTo(0, 0); } catch (e) {} };
   const phone = width <= 680;
-  const cols = phone ? 1 : 3;
-  // The card under the pointer (or focus) shows its alternate photo; every other card shows its cover.
-  // The tag hugs its label at rest and widens on hover only if a bullet is wider than the label. Both widths are measured here
-  // and exposed as --w0 (resting) and --w1 (open) so the width can be transitioned.
-  const grid = useRef(null);
-  useEffect(() => {
-    const measure = () => {
-      if (!grid.current) return;
-      grid.current.querySelectorAll('.category-photo__label').forEach((el) => {
-        const name = el.querySelector('.category-photo__name');
-        const items = [...el.querySelectorAll('.category-photo__type')];
-        const pad = el.offsetWidth - el.clientWidth + parseFloat(getComputedStyle(el).paddingLeft) * 2;
-        const w0 = name.offsetWidth + pad;
-        const w1 = Math.max(w0, ...items.map((i) => i.offsetWidth + pad));
-        el.style.setProperty('--w0', `${w0}px`);
-        el.style.setProperty('--w1', `${w1}px`);
-      });
-    };
-    measure();
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure);
-    window.addEventListener('resize', measure);
-    return () => window.removeEventListener('resize', measure);
-  }, []);
-
-  // Touch devices have no hover, and neither does the one-column phone layout when it is viewed in a narrow desktop window, so a photo that is (nearly) fully on screen opens its tag as if it were hovered: data-inview, styled in index.css.
-  // The 56px phone nav covers the top of the viewport. One photo at a time (the one nearest the centre); it closes the moment it leaves, and
-  // opens after a short settle so a fast fling-scroll doesn't strobe the tags.
-  useEffect(() => {
-    if (!(phone || (window.matchMedia && window.matchMedia('(hover: none)').matches)) || !('IntersectionObserver' in window)) return;
-    const cards = [...grid.current.querySelectorAll('.category-photo')];
-    const ratios = new Map(cards.map((c) => [c, 0]));
-    let shown = null, timer = 0;
-    const show = (el) => { cards.forEach((c) => { if (c === el) c.setAttribute('data-inview', ''); else c.removeAttribute('data-inview'); }); shown = el; };
-    const evaluate = () => {
-      const mid = (window.innerHeight + 56) / 2;
-      let best = null, bestD = Infinity;
-      cards.forEach((c) => {
-        if (ratios.get(c) < 0.9) return;
-        const r = c.getBoundingClientRect();
-        const d = Math.abs((r.top + r.bottom) / 2 - mid);
-        if (d < bestD) { best = c; bestD = d; }
-      });
-      if (best === shown) { clearTimeout(timer); return; }
-      clearTimeout(timer);
-      if (shown) show(null);
-      if (best) timer = setTimeout(() => show(best), 150);
-    };
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach((e) => ratios.set(e.target, e.intersectionRatio));
-      evaluate();
-    }, { threshold: [0, 0.25, 0.5, 0.75, 0.9, 0.95, 1], rootMargin: '-56px 0px 0px 0px' });
-    cards.forEach((c) => io.observe(c));
-    return () => { io.disconnect(); clearTimeout(timer); cards.forEach((c) => c.removeAttribute('data-inview')); };
-  }, [phone]);
 
   return (
-    <section aria-labelledby="session-types-heading" style={css(`padding:var(--space-40) var(--layout-media-margin);display:flex;flex-direction:column;gap:var(--space-12);`)}>
+    <section aria-labelledby="session-types-heading" style={css(`padding:var(--space-40) var(--layout-media-margin);display:flex;flex-direction:column;gap:0;`)}>
       <div style={css(`display:flex;align-items:center;justify-content:space-between;gap:var(--space-16);`)}>
         <div style={css(`display:flex;align-items:center;gap:var(--space-8);flex:none;white-space:nowrap;`)}>
           <span aria-hidden="true" style={css(`width:6px;height:6px;border-radius:50%;background:var(--color-text-primary);flex:none;`)}></span>
-          <h2 id="session-types-heading" className="t-body" style={css(`font-weight:400;`)}>session types</h2>
+          <h2 id="session-types-heading" className="t-caption" style={css(`font-weight:400;line-height:1;text-transform:uppercase;`)}>session types</h2>
         </div>
         <Button variant="text" className="category-photos__all" onClick={() => go('work')}>View all galleries →</Button>
       </div>
-      <div ref={grid} className="category-photos" style={css(`display:grid;grid-template-columns:repeat(${cols},minmax(0,1fr));gap:var(--layout-media-margin);${width > 680 ? '' : 'margin:0 calc(-1 * var(--layout-media-margin));'}`)}>
+      {/* Phones: a swipe strip of cards. Wider screens: three columns. Each card shows its photo with the name and session types underneath;
+          on a hovering pointer the other photos dim while one is hovered or focused (index.css). */}
+      <div className={`category-photos${phone ? ' category-photos--strip' : ''}`} style={phone ? undefined : css(`display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:start;gap:var(--layout-media-margin);`)}>
         {categories.map((c) => (
           <button key={c.cat} className="category-photo" onClick={() => open(c.cat)} aria-label={`View ${c.label} work`}
             style={css(`position:relative;display:block;background:none;border:none;padding:0;cursor:pointer;text-align:left;`)}>
-            <span style={css(`position:relative;display:block;width:100%;aspect-ratio:532 / 700;overflow:hidden;`)}>
-            <img src={c.src} srcSet={cloudinarySrcSet(c.src, WIDTHS)} sizes={width > 680 ? '33vw' : '100vw'} alt="" loading="lazy" draggable="false"
+            <span style={css(`position:relative;display:block;width:100%;aspect-ratio:${phone ? '320 / 340' : '532 / 630'};overflow:hidden;`)}>
+            <img src={c.src} srcSet={cloudinarySrcSet(c.src, WIDTHS)} sizes={phone ? '82vw' : '33vw'} alt="" loading="lazy" draggable="false"
               style={css(`position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:cover;border-radius:var(--radius-none);`)} />
             <span aria-hidden="true" className="category-photo__dim"></span>
             </span>
-            <span className="category-photo__label" aria-hidden="true">
-              <span className="t-mono category-photo__name">{c.label}</span>
-              {c.types && (
-                <span className="category-photo__types" style={{ '--n': c.types.length }}>
-                  {c.types.map((t) => <span key={t} className="t-mono-sm category-photo__type">{t}</span>)}
-                </span>
-              )}
+            <span aria-hidden="true" style={css(`display:flex;flex-direction:column;gap:var(--space-4);margin-top:var(--space-8);`)}>
+              <span className="t-label">{c.label}</span>
+              <span className="t-label" style={css(`display:flex;flex-wrap:wrap;gap:var(--space-4);color:var(--color-text-tertiary);`)}>
+                {c.types.map((t, i) => <span key={t}>{i > 0 && <span style={css(`margin-right:var(--space-4);`)}>•</span>}{t}</span>)}
+              </span>
             </span>
           </button>
         ))}

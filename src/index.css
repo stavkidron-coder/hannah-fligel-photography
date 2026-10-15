@@ -17,7 +17,7 @@
   /* Radius */
   --radius-none:0; --radius-sm:4px; --radius-md:8px; --radius-lg:12px;
   /* Layout (Desktop mode; Mobile below) */
-  --layout-page-margin:var(--space-48); --layout-section-y:var(--space-120); --layout-media-margin:var(--space-12);
+  --layout-page-margin:var(--space-16); --layout-section-y:var(--space-120); --layout-media-margin:var(--space-16);
   /* Fonts */
   --font-sans:'Instrument Sans',system-ui,sans-serif; --font-display:'Antic Didone',serif;
   --font-quote:'Cormorant Garamond',serif; --font-mono:'DM Mono',monospace;
@@ -108,23 +108,20 @@ html[data-intro] .hero-ed-item { animation-play-state: paused; }
 /* Stop at the top/bottom instead of rubber-banding. */
 html, body { overscroll-behavior-y: none; }
 
-/* Home: category photos. The label is a dark tag on the photo's top-left corner; on hover/focus it opens downward to list the session types. */
-.category-photo__label{position:absolute;left:var(--space-12);top:var(--space-12);display:flex;flex-direction:column;align-items:flex-start;padding:var(--space-4) var(--space-8);border-radius:var(--radius-sm);background:color-mix(in srgb,var(--color-bg-dark) 80%,transparent);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);color:var(--color-text-inverse);white-space:nowrap;box-sizing:border-box;width:var(--w0,auto);overflow:hidden;transition:width .35s cubic-bezier(.65,0,.35,1);}
-.category-photo:hover .category-photo__label,.category-photo:focus-visible .category-photo__label,.category-photo[data-inview] .category-photo__label{width:var(--w1,auto);}
-.category-photo__name{width:max-content;}
-.category-photo__label .t-mono,.category-photo__label .t-mono-sm{color:inherit;}
-.category-photo__types{display:block;height:0;overflow:hidden;opacity:0;transition:height .35s cubic-bezier(.65,0,.35,1),opacity .25s ease;}
-.category-photo__type{display:block;width:max-content;padding-left:18px;position:relative;line-height:16px;}
-.category-photo__type:first-child{margin-top:var(--space-12);}
-.category-photo__type::before{content:'•';position:absolute;left:5px;}
-.category-photo:hover .category-photo__types,.category-photo:focus-visible .category-photo__types,.category-photo[data-inview] .category-photo__types{height:calc(var(--n) * 16px + var(--space-12));opacity:1;}
-.category-photo:focus-visible{outline-offset:4px;}
+/* Home: category photos. */
 /* Same hover as the hero: the hovered photo stays bright, the others dim. */
 .category-photo__dim{position:absolute;inset:0;background:#000;opacity:0;pointer-events:none;transition:opacity .4s ease;}
 @media (hover: hover) {
   .category-photos:has(.category-photo:hover) .category-photo:not(:hover) .category-photo__dim{opacity:.5;}
 }
 .category-photos:has(.category-photo:focus-visible) .category-photo:not(:focus-visible) .category-photo__dim{opacity:.5;}
+
+/* Phones: the session types are a swipe strip of cards with the next one peeking in; each snaps to the left margin. */
+.category-photos--strip{display:flex;align-items:flex-start;gap:var(--space-12);overflow-x:auto;margin:0 calc(-1 * var(--layout-media-margin));padding:0 var(--layout-media-margin);
+  scroll-snap-type:x mandatory;scroll-padding-left:var(--layout-media-margin);scrollbar-width:none;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;}
+.category-photos--strip::-webkit-scrollbar{display:none;}
+.category-photos--strip .category-photo__dim{display:none;} /* no dimming of the other photos on phones */
+.category-photos--strip .category-photo{flex:none;width:min(320px,calc(100vw - 70px));scroll-snap-align:start;}
 
 /* Phones: trim the "View all galleries" button's side padding (and its underline to match) so the "session types" heading beside it stays on one line. */
 @media (max-width:680px){

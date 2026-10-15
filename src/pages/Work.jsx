@@ -95,7 +95,7 @@ export default function Work() {
   const sessionCatLabel = activeSession ? catLabels[activeSession.cat] : '';
 
   return (
-    <main id="main" style={css(`max-width:1180px;margin:0 auto;padding:clamp(56px,8vw,92px) clamp(20px,4vw,40px) 0;`)}>
+    <main id="main" style={css(`max-width:1180px;margin:0 auto;padding:clamp(56px,8vw,92px) var(--layout-page-margin) 0;`)}>
 
       {isSessionView && (<>
         <button className="t-label" onClick={closeSession} type="button" style={css(`background:none;border:none;cursor:pointer;padding:0;margin-bottom:clamp(30px,4vw,44px);color:var(--color-text-tertiary);`)}>← Back to {backLabel}</button>

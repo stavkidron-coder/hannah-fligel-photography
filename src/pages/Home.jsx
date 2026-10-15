@@ -35,7 +35,7 @@ export default function Home() {
 
       <CategoryPhotos />
 
-      <section style={css(`display:flex;flex-wrap:wrap;gap:var(--space-40) var(--space-64);align-items:center;justify-content:space-between;padding:var(--space-64) var(--layout-page-margin);`)}>
+      <section style={css(`display:flex;flex-wrap:wrap;gap:var(--space-40) var(--space-64);align-items:center;justify-content:space-between;padding:var(--space-64) ${isDesktop ? 'var(--space-48)' : 'var(--layout-page-margin)'};`)}>
         {/* Every quote sits in the same grid cell, so the block is always as tall as the longest one and nothing below it moves when the quote changes. */}
         <div style={css(`flex:1 1 420px;max-width:683px;display:grid;opacity:${testimonialFading ? 0 : 1};transition:opacity 1.4s ease-in-out;`)}>
           {testimonialsData.map((t, i) => (

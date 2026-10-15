@@ -9,7 +9,7 @@ export function layoutFor(width) {
     teaserGridCols: isMobile ? 1 : (isTablet ? 2 : 3),
     sessionGridCols: isMobile ? 1 : 2,
     photoGap: isMobile ? '6px' : 'clamp(16px,2vw,22px)',
-    teaserSectionStyle: { padding: isMobile ? 0 : '0 clamp(20px,4vw,40px)' },
+    teaserSectionStyle: { padding: isMobile ? 0 : '0 var(--layout-page-margin)' },
     sessionGridStyle: isMobile
       ? { width: '100vw', marginLeft: 'calc(50% - 50vw)', display: 'grid', gridTemplateColumns: '1fr', gap: '6px' }
       : { maxWidth: 860, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gridAutoFlow: 'dense', gap: 'clamp(14px,2vw,20px)' },

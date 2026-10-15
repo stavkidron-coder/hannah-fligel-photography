@@ -18,7 +18,7 @@ export default function Contact() {
     sessionType: css(contact.fieldStyle.sessionType), date: css(contact.fieldStyle.date),
   };
   return (
-    <main id="main" style={css(`max-width:620px;margin:0 auto;padding:clamp(64px,9vw,108px) var(--space-32) clamp(80px,11vw,120px);`)}>
+    <main id="main" style={css(`max-width:620px;margin:0 auto;padding:clamp(64px,9vw,108px) var(--layout-page-margin) clamp(80px,11vw,120px);`)}>
       <h1 className="t-h1" style={css(`margin:0 0 clamp(40px,5vw,56px);`)}>Let's talk.</h1>
 
       {isRealSent && (<>

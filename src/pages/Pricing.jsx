@@ -30,7 +30,7 @@ export default function Pricing() {
   const navContact = () => go('contact');
   const secondary = css(`color:var(--color-text-secondary);text-wrap:pretty;`);
   return (
-    <main id="main" style={css(`max-width:1160px;margin:0 auto;padding:clamp(64px,9vw,108px) var(--space-32) clamp(80px,11vw,128px);`)}>
+    <main id="main" style={css(`max-width:1160px;margin:0 auto;padding:clamp(64px,9vw,108px) var(--layout-page-margin) clamp(80px,11vw,128px);`)}>
       <header style={css(`text-align:center;margin-bottom:clamp(54px,7vw,80px);`)}>
         <h1 className="t-h1">Pricing</h1>
         <p className="t-body" style={css(`margin:var(--space-16) auto 0;max-width:460px;color:var(--color-text-tertiary);`)}>A fully edited, curated gallery — every image worth keeping.</p>
