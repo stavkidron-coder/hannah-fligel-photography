@@ -4,6 +4,7 @@ import { css } from '../lib/css';
 import { testimonialsData } from '../data/content';
 import HeroEditorial from '../components/HeroEditorial';
 import HeroCarousel from '../components/HeroCarousel';
+import HeroDrift from '../components/HeroDrift';
 import Button from '../components/Button';
 import CategoryPhotos from '../components/CategoryPhotos';
 
@@ -20,7 +21,8 @@ export default function Home() {
       {isDesktop ? (
       <HeroEditorial />
       ) : (
-      <HeroCarousel />
+      // Phones: slow drift like desktop by default; ?hero=slides brings back the one-photo-at-a-time carousel for comparing.
+      new URLSearchParams(window.location.search).get('hero') === 'slides' ? <HeroCarousel /> : <HeroDrift />
       )}
 
       <section aria-label="Introduction" style={css(`padding:var(--layout-section-y) var(--layout-page-margin);display:flex;flex-direction:column;align-items:flex-start;gap:var(--space-40);`)}>
