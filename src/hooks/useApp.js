@@ -1,10 +1,11 @@
 import { createContext, useCallback, useEffect, useLayoutEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { heroSlides, testimonialsData, teaserPhotos } from '../data/content';
+import { heroSlides, testimonialsData } from '../data/content';
 import { allSessions } from '../data/sessions';
 import { heroIntervalSec, batchSize } from '../config';
 import { hashFor, parseHash, setTitle } from '../lib/routes';
 import { useContactForm } from './useContactForm';
+import { cloudinaryResize } from '../lib/cloudinary';
 
 export const AppContext = createContext(null);
 
@@ -59,7 +60,7 @@ export function useApp() {
       const img = new Image();
       img.onload = () => { cache[src] = img.naturalWidth > img.naturalHeight; done(); };
       img.onerror = () => { cache[src] = false; done(); };
-      img.src = encodeURI(src);
+      img.src = encodeURI(cloudinaryResize(src, 80)); // tiny copy for Cloudinary photos: only the aspect ratio is needed
     });
   }, []);
 
@@ -97,7 +98,8 @@ export function useApp() {
       document.body.style.overflow = 'hidden';
     } catch (e) {}
     try {
-      inerted.current = Array.prototype.slice.call(document.querySelectorAll('nav, main, footer'));
+      // The top bar stays live: on phones it holds the close (X) button, and the menu's own link list is a <nav> too.
+      inerted.current = Array.prototype.slice.call(document.querySelectorAll('main, footer'));
       inerted.current.forEach((n) => { n.inert = true; n.setAttribute('aria-hidden', 'true'); });
     } catch (e) { inerted.current = []; }
     let tries = 0;
@@ -184,19 +186,21 @@ export function useApp() {
   };
 
   /* ---------- testimonials ---------- */
+  // Slow crossfade: fades out over FADE_MS, swaps, fades back in; each quote then rests for the rest of HOLD_MS.
+  const TESTIMONIAL_FADE_MS = 1400, TESTIMONIAL_HOLD_MS = 9000;
   const advanceTestimonial = (toIndex) => {
     setTestimonialFading(true);
     clearTimeout(testimonialFade.current);
     testimonialFade.current = setTimeout(() => {
       setActiveTestimonial((a) => toIndex ?? (a + 1) % testimonialsData.length);
       setTestimonialFading(false);
-    }, 400);
+    }, TESTIMONIAL_FADE_MS);
   };
   const selectTestimonial = (i) => {
     advanceTestimonial(i);
     if (testimonialTimer.current) {
       clearInterval(testimonialTimer.current);
-      testimonialTimer.current = setInterval(() => advanceTestimonial(), 6000);
+      testimonialTimer.current = setInterval(() => advanceTestimonial(), TESTIMONIAL_HOLD_MS);
     }
   };
 
@@ -224,9 +228,8 @@ export function useApp() {
       setWidth(w);
     };
     window.addEventListener('resize', onResize);
-    ensureOrientations(teaserPhotos);
     if (!reducedMotion.current) {
-      testimonialTimer.current = setInterval(() => advanceTestimonial(), 6000);
+      testimonialTimer.current = setInterval(() => advanceTestimonial(), TESTIMONIAL_HOLD_MS);
     }
     return () => {
       clearInterval(heroTimer.current);

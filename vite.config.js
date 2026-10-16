@@ -45,5 +45,6 @@ function staticRouteEntries() {
 
 export default defineConfig({
   plugins: [staticRouteEntries()],
+  server: process.env.PORT ? { port: Number(process.env.PORT), strictPort: true } : {},
   oxc: { jsx: { runtime: 'automatic' } },
 });

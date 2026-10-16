@@ -2,9 +2,10 @@ import { Route, Routes } from 'react-router-dom';
 import { AppContext, useApp } from './hooks/useApp';
 import { css } from './lib/css';
 import { pathFor } from './lib/routes';
-import Nav from './components/Nav';
+import NavEditorial from './components/NavEditorial';
 import MobileMenu from './components/MobileMenu';
 import Footer from './components/Footer';
+import Intro from './components/Intro';
 import Home from './pages/Home';
 import Work from './pages/Work';
 import About from './pages/About';
@@ -18,11 +19,13 @@ export default function App() {
   const location = pathFor(app.route);
   return (
     <AppContext.Provider value={app}>
-      <div style={css("--cream:#F1EBE1;--paper:#FAF6EF;--ink:#2E2A24;--soft:#5B5247;--muted:#6F6151;--line:#DED1BF;--ph1:#E7DDCC;--ph2:#EEE6D7;background:var(--cream);color:var(--ink);font-family:'EB Garamond',Georgia,serif;min-height:100vh;")}>
+      <div style={css("--cream:var(--color-bg-page);--paper:var(--color-bg-surface);--ink:var(--color-text-primary);--soft:var(--color-text-secondary);--muted:var(--color-text-tertiary);--line:var(--color-border-default);--ph1:#E7DDCC;--ph2:#EEE6D7;background:var(--color-bg-page);color:var(--color-text-primary);font-family:var(--font-sans);min-height:100vh;")}>
+
+        <Intro />
 
         <a href="#main" className="skip-link">Skip to content</a>
 
-        <Nav />
+        <NavEditorial />
         <MobileMenu />
 
         <Routes location={location}>

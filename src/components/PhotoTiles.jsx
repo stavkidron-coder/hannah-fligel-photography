@@ -1,3 +1,4 @@
+import { cloudinarySrcSet, TILE_WIDTHS, tileSizes } from '../lib/cloudinary';
 export function skeletonTile(key) {
   return (
     <div
@@ -23,7 +24,7 @@ export function sessionPhotoTile(src, span, i, label) {
   return (
     <div key={src} style={style}>
       <img
-        src={encodeURI(src)} alt={alt} loading="lazy"
+        src={encodeURI(src)} srcSet={cloudinarySrcSet(encodeURI(src), TILE_WIDTHS)} sizes={cloudinarySrcSet(src, TILE_WIDTHS) ? tileSizes(span) : undefined} alt={alt} loading="lazy"
         style={{ display: 'block', width: '100%', height: span === undefined ? 'auto' : '100%', objectFit: 'cover' }}
       />
     </div>

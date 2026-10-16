@@ -1,7 +1,13 @@
+import { isCloudinaryAlbum, cloudinaryId, cloudinaryUrl } from '../lib/cloudinary.js';
+
+const GALLERY_WIDTH = 1000; // px: the default/fallback src (also used to measure orientation); components add a srcset for sharper screens
+
 const session = (id, title, cat, folder, prefix, nums, coverNum, pathCat, root) => {
   const fc = pathCat || cat;
   const safePrefix = prefix.replace(/&/g, 'AND');
-  const p = (n) => `/${root || 'images'}/${fc}/${folder}/${safePrefix}${n}.jpg`;
+  const p = isCloudinaryAlbum(fc, folder)
+    ? (n) => cloudinaryUrl(cloudinaryId(fc, folder, `${safePrefix}${n}`), GALLERY_WIDTH)
+    : (n) => `/${root || 'images'}/${fc}/${folder}/${safePrefix}${n}.jpg`;
   const photos = nums.map(p);
   const cover = coverNum !== undefined ? p(coverNum) : photos[0];
   return { id, title, cat, photos, cover };
