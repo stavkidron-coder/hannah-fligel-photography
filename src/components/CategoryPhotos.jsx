@@ -40,7 +40,7 @@ export default function CategoryPhotos() {
             </span>
             <span aria-hidden="true" style={css(`display:flex;flex-direction:column;gap:var(--space-4);margin-top:var(--space-8);`)}>
               <span className="t-label">{c.label}</span>
-              <span className="t-label" style={css(`display:flex;flex-wrap:wrap;gap:var(--space-4);color:var(--color-text-tertiary);`)}>
+              <span className="t-eyebrow" style={css(`display:flex;flex-wrap:wrap;gap:var(--space-4);color:var(--color-text-tertiary);`)}>
                 {c.types.map((t, i) => <span key={t}>{i > 0 && <span style={css(`margin-right:var(--space-4);`)}>•</span>}{t}</span>)}
               </span>
             </span>
