@@ -34,7 +34,7 @@ export default function Contact() {
           <p className="t-label" style={css(`margin:0 0 12px;color:var(--color-text-tertiary);`)}>No email app opened?</p>
           <p className="t-body" style={css(`margin:0 0 var(--space-16);color:var(--color-text-secondary);`)}><a href={draftHref} style={css(`color:var(--color-text-primary);text-decoration:underline;text-underline-offset:3px;`)}>Reopen the draft</a>, or email me directly:</p>
           <div style={css(`display:flex;flex-wrap:wrap;align-items:center;gap:12px;`)}>
-            <a href={inboxMailto} style={css(`font-size:18px;color:var(--color-text-primary);text-decoration:underline;text-underline-offset:3px;`)}>{inboxEmail}</a>
+            <a href={inboxMailto} style={css(`font-size:1.125rem;color:var(--color-text-primary);text-decoration:underline;text-underline-offset:3px;`)}>{inboxEmail}</a>
             <Button variant="outline" onClick={onCopyEmail}>{copyLabel}</Button>
           </div>
         </div>

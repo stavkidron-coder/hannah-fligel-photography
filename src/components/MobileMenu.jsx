@@ -15,7 +15,7 @@ export default function MobileMenu() {
     <div id="mobile-menu" role="dialog" aria-modal="true" aria-label="Site menu" tabIndex="-1" ref={menuRef} onKeyDown={onMenuKeyDown} style={css(`position:fixed;inset:0;z-index:60;box-sizing:border-box;background:var(--color-bg-page);display:flex;flex-direction:column;padding:calc(${NAV_PHONE_H} + var(--space-24)) var(--layout-page-margin) max(var(--space-32),env(safe-area-inset-bottom));overflow-y:auto;`)}>
       <nav aria-label="Site">
         {LINKS.map(([label, key]) => (
-          <button key={key} onClick={() => go(key)} aria-current={page === key ? 'page' : undefined} style={css(`display:block;background:none;border:none;cursor:pointer;padding:0;margin:0 0 var(--space-4);min-height:44px;text-align:left;font-family:var(--font-display);font-weight:400;font-size:40px;line-height:1.25;letter-spacing:-.005em;color:var(--color-text-primary);${page === key ? 'text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:8px;' : ''}`)}>{label}</button>
+          <button key={key} onClick={() => go(key)} aria-current={page === key ? 'page' : undefined} style={css(`display:block;background:none;border:none;cursor:pointer;padding:0;margin:0 0 var(--space-4);min-height:44px;text-align:left;font-family:var(--font-sans);font-weight:400;font-size:1.8125rem;line-height:1.25;letter-spacing:-.01em;color:var(--color-text-primary);${page === key ? 'text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:8px;' : ''}`)}>{label}</button>
         ))}
       </nav>
       <div style={css(`margin-top:auto;padding-top:var(--space-32);display:flex;flex-direction:column;gap:var(--space-24);`)}>

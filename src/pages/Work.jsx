@@ -101,7 +101,7 @@ export default function Work() {
         <button className="t-label" onClick={closeSession} type="button" style={css(`background:none;border:none;cursor:pointer;padding:0;margin-bottom:clamp(30px,4vw,44px);color:var(--color-text-tertiary);`)}>← Back to {backLabel}</button>
         <div style={css(`max-width:860px;margin:0 auto clamp(50px,7vw,76px);text-align:center;`)}>
           <h1 className="t-h1">{sessionTitle}</h1>
-          <p className="t-mono-sm" style={css(`margin:var(--space-12) 0 0;`)}>{sessionCatLabel.toLowerCase()}</p>
+          <p className="t-caption" style={css(`margin:var(--space-12) 0 0;color:var(--color-text-tertiary);`)}>{sessionCatLabel.toLowerCase()}</p>
         </div>
         <div style={sessionGridStyle}>{sessionPhotoTiles}</div>
 
@@ -114,7 +114,7 @@ export default function Work() {
 
         <div style={css(`max-width:860px;margin:0 auto;padding:clamp(64px,8vw,96px) 0 clamp(80px,10vw,120px);border-top:1px solid var(--color-border-default);margin-top:clamp(56px,7vw,80px);display:flex;flex-direction:column;align-items:center;gap:clamp(48px,6vw,66px);`)}>
           <div style={css(`text-align:center;display:flex;flex-direction:column;align-items:center;gap:22px;`)}>
-            <p className="t-lead" style={css(`color:var(--color-text-secondary);`)}>Ready to plan a session like this?</p>
+            <p className="t-h3" style={css(`color:var(--color-text-secondary);`)}>Ready to plan a session like this?</p>
             <Button variant="primary" onClick={navInvest}>View pricing →</Button>
           </div>
 
@@ -127,7 +127,7 @@ export default function Work() {
                     <div style={css(`border-radius:var(--radius-none);overflow:hidden;background:var(--color-bg-surface);aspect-ratio:4 / 5;`)}><img src={m.cover} srcSet={cloudinarySrcSet(m.cover, COVER_WIDTHS)} sizes={cloudinarySrcSet(m.cover, COVER_WIDTHS) ? COVER_SIZES_MORE : undefined} alt={m.alt} loading="lazy" style={css(`display:block;width:100%;height:100%;object-fit:cover;`)} /></div>
                     <div>
                       <p className="t-body">{m.title}</p>
-                      <p className="t-mono-sm">{m.catLabel.toLowerCase()}</p>
+                      <p className="t-caption" style={css(`color:var(--color-text-tertiary);`)}>{m.catLabel.toLowerCase()}</p>
                     </div>
                   </button>
                 </Fragment>))}
@@ -154,7 +154,7 @@ export default function Work() {
               <div style={css(`border-radius:var(--radius-none);overflow:hidden;background:var(--color-bg-surface);aspect-ratio:4 / 5;`)}><img src={s.cover} srcSet={cloudinarySrcSet(s.cover, COVER_WIDTHS)} sizes={cloudinarySrcSet(s.cover, COVER_WIDTHS) ? COVER_SIZES_GRID : undefined} alt={s.alt} loading="lazy" style={css(`display:block;width:100%;height:100%;object-fit:cover;`)} /></div>
               <div>
                 <p className="t-body">{s.title}</p>
-                <p className="t-mono-sm">{s.catLabel.toLowerCase()}</p>
+                <p className="t-caption" style={css(`color:var(--color-text-tertiary);`)}>{s.catLabel.toLowerCase()}</p>
               </div>
             </button>
           </Fragment>))}
@@ -166,7 +166,7 @@ export default function Work() {
           </div>
         </>)}
         <div style={css(`text-align:center;padding:clamp(70px,9vw,108px) 0 clamp(80px,10vw,120px);`)}>
-          <p className="t-lead" style={css(`margin:0 0 var(--space-24);color:var(--color-text-secondary);`)}>Like what you see?</p>
+          <p className="t-h3" style={css(`margin:0 0 var(--space-24);color:var(--color-text-secondary);`)}>Like what you see?</p>
           <Button variant="primary" onClick={navInvest}>View pricing →</Button>
         </div>
       </>)}

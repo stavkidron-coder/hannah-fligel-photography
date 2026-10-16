@@ -23,7 +23,7 @@ export default function CategoryPhotos() {
       <div style={css(`display:flex;align-items:center;justify-content:space-between;gap:var(--space-16);`)}>
         <div style={css(`display:flex;align-items:center;gap:var(--space-8);flex:none;white-space:nowrap;`)}>
           <span aria-hidden="true" style={css(`width:6px;height:6px;border-radius:50%;background:var(--color-text-primary);flex:none;`)}></span>
-          <h2 id="session-types-heading" className="t-caption" style={css(`font-weight:400;line-height:1;text-transform:uppercase;`)}>session types</h2>
+          <h2 id="session-types-heading" className="t-eyebrow" style={css(`line-height:1;`)}>session types</h2>
         </div>
         <Button variant="text" className="category-photos__all" onClick={() => go('work')}>View all galleries →</Button>
       </div>

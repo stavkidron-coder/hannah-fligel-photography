@@ -125,7 +125,7 @@ export default function HeroCarousel() {
               <button key={k} data-k={k} onClick={() => { if (s.current.swiped) { s.current.swiped = false; return; } open(p.cat); }}
                 aria-label={`View ${p.label} work`} aria-roledescription="slide" aria-hidden={on ? undefined : 'true'} tabIndex={on ? 0 : -1}
                 style={css(`position:absolute;top:0;left:${k * 100}%;width:100%;display:flex;flex-direction:column;align-items:stretch;gap:var(--space-4);background:none;border:none;padding:0;cursor:pointer;`)}>
-                <span className="t-mono-sm hero-ed-label" aria-hidden="true" style={css(`align-self:flex-end;padding-right:var(--space-16);line-height:15px;will-change:transform;${on ? 'color:var(--color-text-primary);' : ''}`)}>{p.label}</span>
+                <span className="t-caption hero-ed-label" aria-hidden="true" style={css(`align-self:flex-end;padding-right:var(--space-16);line-height:15px;will-change:transform;${on ? 'color:var(--color-text-primary);' : ''}`)}>{p.label}</span>
                 <span style={css(`position:relative;display:block;width:100%;aspect-ratio:4 / 5;overflow:hidden;background:var(--color-border-default);`)}>
                   <img src={p.src} srcSet={cloudinarySrcSet(p.src, WIDTHS)} sizes="100vw" alt="" draggable="false" decoding="async"
                     loading="eager" fetchpriority={k === 0 ? 'high' : undefined}

@@ -3,7 +3,7 @@ import { inboxEmail, web3formsKey, formEndpoint } from '../config';
 
 const EMPTY_VALUES = { name: '', email: '', sessionType: '', date: '', message: '' };
 
-const baseFieldStyle = "border: none; border-bottom: 1px solid var(--color-border-default); background: transparent; padding: 8px 0; font-family: var(--font-sans); font-size: 18px; color: var(--color-text-primary); outline: none; border-radius: var(--radius-md); border-style: solid; border-width: 1px; padding-left: 8px; padding-right: 8px;";
+const baseFieldStyle = "border: none; border-bottom: 1px solid var(--color-border-default); background: transparent; padding: 8px 0; font-family: var(--font-sans); font-size: 1.125rem; color: var(--color-text-primary); outline: none; border-radius: var(--radius-md); border-style: solid; border-width: 1px; padding-left: 8px; padding-right: 8px;";
 
 function validate(values) {
   const errors = {};

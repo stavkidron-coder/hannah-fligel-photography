@@ -120,7 +120,7 @@ export default function Intro() {
 
     // Start once the display font is in, so the typed letters don't shift when it swaps.
     Promise.race([
-      document.fonts && document.fonts.load("44px 'Antic Didone'", NAME),
+      document.fonts && document.fonts.load("44px 'Cormorant Garamond'", NAME),
       new Promise((r) => setTimeout(r, 1200)),
     ]).catch(() => {}).then(() => { if (!dead) raf = requestAnimationFrame(frame); });
 
@@ -137,7 +137,7 @@ export default function Intro() {
   if (done) return null;
   return (
     <div ref={cover} aria-hidden="true" style={css(`position:fixed;inset:0;z-index:1000;background:var(--cream);display:flex;align-items:center;justify-content:center;cursor:pointer;`)}>
-      <div ref={logo} style={css(`position:relative;padding:.32em .5em;font-family:'Antic Didone',serif;font-size:min(30px,calc((100vw - 96px)/16));line-height:normal;color:var(--ink);`)}>
+      <div ref={logo} style={css(`position:relative;padding:.32em .5em;font-family:var(--font-serif);font-size:min(30px,calc((100vw - 96px)/16));line-height:normal;color:var(--ink);`)}>
         <svg width="100%" height="100%" style={css(`position:absolute;inset:0;overflow:visible;pointer-events:none;`)}>
           <rect ref={rect} width="100%" height="100%" pathLength="1" fill="none" stroke="var(--ink)" strokeWidth="1.25"
             style={{ strokeDasharray: '1 1', strokeDashoffset: 1, opacity: 0 }} />

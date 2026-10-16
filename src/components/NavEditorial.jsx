@@ -13,9 +13,9 @@ const PHONE_PAD_Y = '10px';
 // End state: the 60x36 logo box with H, F and P in a straight line. Letter centres are measured from the box's top-left.
 const LOGO_W = 60, LOGO_H = 36; // a rectangle that hugs the line of letters
 const LOGO_FONT = 22;
-// Placed by the letters' ink (not their text boxes), measured for Antic Didone at 22px: capitals sit 0.2px above their line box's centre,
-// and H/F/P are different widths. 6.5px between letters leaves 7px at each side of the group, centred in the 60px box.
-const TARGET = { h: [14.07, 18.2], f: [31.85, 18.2], p: [48.97, 18.2] };
+// Placed by the letters' ink (not their text boxes), measured for Cormorant Garamond Regular at 22px: capitals sit about 0.1px above their
+// line box's centre, and H/F/P are different widths. 6.5px between the inks leaves about 6.2px at each side of the group, centred in the 60px box.
+const TARGET = { h: [13.86, 17.88], f: [32.68, 17.88], p: [48.71, 17.91] };
 
 // Scroll timeline (0 = top of page, 1 = hero scrolled out from under the nav).
 // The nav is a solid cream bar that hugs the logo: padding above and below the logo button, so it shrinks as the wordmark collapses.
@@ -113,10 +113,10 @@ export default function NavEditorial() {
           <path ref={outline} d={`M${LOGO_W / 2} .5H${LOGO_W - .5}V${LOGO_H - .5}H.5V.5H${LOGO_W / 2}`} pathLength="1" fill="none" stroke="#2E2A24" strokeWidth="1" strokeDasharray="1" strokeDashoffset="1"></path>
         </svg>
         <span ref={word} aria-hidden="true" style={css(`position:absolute;left:0;top:0;pointer-events:none;display:flex;align-items:baseline;gap:.1875em;white-space:nowrap;`)}>
-          <span style={css(`font-family:var(--font-display);font-size:1em;line-height:normal;letter-spacing:-.005em;`)}>
+          <span style={css(`font-family:var(--font-serif);font-size:1em;line-height:normal;letter-spacing:-.005em;`)}>
             <span ref={hEl} style={letter}>H</span><span ref={setFade(0)}>annah</span>{' '}<span ref={fEl} style={letter}>F</span><span ref={setFade(1)}>ligel</span>
           </span>
-          <span style={css(`font-family:var(--font-display);font-size:.375em;line-height:normal;letter-spacing:.1em;`)}>
+          <span style={css(`font-family:var(--font-serif);font-size:.375em;line-height:normal;letter-spacing:.1em;`)}>
             <span ref={pEl} style={letter}>P</span><span ref={setFade(2)}>hotography</span>
           </span>
         </span>

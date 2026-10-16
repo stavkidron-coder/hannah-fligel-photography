@@ -26,7 +26,7 @@ export default function Home() {
       )}
 
       <section aria-label="Introduction" style={css(`padding:var(--layout-section-y) var(--layout-page-margin);display:flex;flex-direction:column;align-items:flex-start;gap:var(--space-40);`)}>
-        <p className="t-lead" style={css(`max-width:835px;`)}>I believe a photograph isn’t about the pose.<br />It’s about being yourself, and having a story to look back on.</p>
+        <p className="t-h2" style={css(`max-width:960px;`)}>I believe a photograph isn’t about the pose.<br />It’s about being yourself, and having a story to look back on.</p>
         <div className="intro-actions" style={css(`display:flex;flex-wrap:wrap;align-items:center;gap:var(--space-24);`)}>
           <Button variant="primary" onClick={navWork}>See the work</Button>
           <Button variant="text" onClick={navAbout}>Learn more →</Button>

@@ -142,7 +142,7 @@ export default function HeroEditorial() {
         <div ref={row} className="hero-editorial-row" style={css(`display:flex;gap:${PHOTO_GAP}px;height:100%;will-change:transform;`)}>
           {Array.from({ length: COPIES }, (_, c) => slides.map((s, i) => (
             <button key={`${c}-${s.label}`} className="hero-ed-item" onClick={() => open(s.cat)} aria-label={`View ${s.label} work`} aria-hidden={c ? 'true' : undefined} tabIndex={c ? -1 : undefined} style={{ ...css(`flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:var(--space-4);background:none;border:none;padding:0;cursor:pointer;`), '--i': i }}>
-              <span className="hero-ed-label t-mono-sm" aria-hidden="true" style={css(`padding-right:var(--space-12);line-height:15px;`)}>{s.label}</span>
+              <span className="hero-ed-label t-caption" aria-hidden="true" style={css(`padding-right:var(--space-12);line-height:15px;`)}>{s.label}</span>
               <span className="hero-ed-photo" style={{ position: 'relative', display: 'block', height: `max(${imgH}, 440px)`, aspectRatio: s.ratio }}>
                 <img src={s.src} alt="" draggable="false" style={{ display: 'block', width: '100%', height: '100%', objectFit: 'cover' }} />
                 <span aria-hidden="true" className="hero-ed-dim"></span>

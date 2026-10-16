@@ -141,7 +141,7 @@ export default function HeroDrift() {
               <button key={`${c}-${p.label}`} className="hero-ed-item" onClick={() => open(p.cat)} aria-label={`View ${p.label} work`}
                 aria-hidden={c ? 'true' : undefined} tabIndex={c ? -1 : undefined}
                 style={{ ...css(`flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:var(--space-4);background:none;border:none;padding:0;cursor:pointer;`), '--i': i }}>
-                <span className="hero-ed-label t-mono-sm" aria-hidden="true" style={css(`padding-right:var(--space-16);line-height:15px;will-change:transform;`)}>{p.label}</span>
+                <span className="hero-ed-label t-caption" aria-hidden="true" style={css(`padding-right:var(--space-16);line-height:15px;will-change:transform;`)}>{p.label}</span>
                 <span style={{ position: 'relative', display: 'block', height: 'calc(100vw * 5 / 4)', aspectRatio: p.ratio, overflow: 'hidden', background: 'var(--color-border-default)' }}>
                   <img src={p.src} srcSet={cloudinarySrcSet(p.src, WIDTHS)} sizes={portrait ? '84vw' : '188vw'} alt="" draggable="false" decoding="async"
                     loading="eager" fetchpriority={c === 0 && i === 0 ? 'high' : undefined}
